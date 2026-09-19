@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "provenanceType": "sanitized-derivative",
+  "recordedOn": "2026-09-19",
+  "source": {
+    "visibility": "private",
+    "baseRevision": "6ab4cb746f4f14c6d99764736e65df35c43dc26e",
+    "worktreeState": "not-attested",
+    "revisionMeaning": "Base Git revision visible when this record was created; it does not attest to a clean worktree or byte-for-byte ancestry."
+  },
+  "derivation": {
+    "method": "Selected artifacts were condensed, rewritten, or newly created as recorded in the source map.",
+    "sourceMap": "SOURCE_MAP.md",
+    "byteForByteCopy": false
+  },
+  "publication": {
+    "status": "on-hold",
+    "license": "not-selected",
+    "reviewChecklist": "REVIEW_CHECKLIST.md"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "workshop-agentic-engineering-reference",
+  "version": "0.0.0-private",
+  "private": true,
+  "description": "Sanitized reference for evidence-driven agentic software engineering.",
+  "type": "module",
+  "engines": {
+    "node": "22.15.0",
+    "pnpm": "10.33.1"
+  },
+  "packageManager": "pnpm@10.33.1",
+  "scripts": {
+    "check:agents": "node scripts/checks/validate-agent-frontmatter.mjs && node scripts/checks/check-separation.mjs",
+    "check:skills": "node scripts/checks/validate-skills.mjs && node scripts/checks/check-separation.mjs",
+    "check:references": "node scripts/checks/check-agent-skill-references.mjs && node scripts/checks/check-markdown-links.mjs && node scripts/checks/check-referenced-files.mjs && node scripts/checks/check-duplicate-names.mjs && node scripts/checks/check-artifact-paths.mjs && node scripts/checks/check-browser-evidence.mjs && node scripts/checks/check-project-contract.mjs && node scripts/checks/check-provenance.mjs && node scripts/checks/check-source-map.mjs",
+    "check:sanitization": "node scripts/checks/check-sanitization.mjs && node scripts/checks/check-secrets.mjs",
+    "lint:markdown": "node scripts/checks/lint-markdown.mjs",
+    "check:all": "node scripts/runtime/sync-agent-setup.mjs --check && node scripts/checks/validate-agent-frontmatter.mjs && node scripts/checks/check-separation.mjs && node scripts/checks/validate-skills.mjs && node scripts/checks/check-agent-skill-references.mjs && node scripts/checks/check-markdown-links.mjs && node scripts/checks/check-referenced-files.mjs && node scripts/checks/check-duplicate-names.mjs && node scripts/checks/check-artifact-paths.mjs && node scripts/checks/check-browser-evidence.mjs && node scripts/checks/check-project-contract.mjs && node scripts/checks/check-provenance.mjs && node scripts/checks/check-source-map.mjs && node scripts/checks/check-sanitization.mjs && node scripts/checks/check-secrets.mjs && node scripts/checks/lint-markdown.mjs",
+    "sync:setup": "node scripts/runtime/sync-agent-setup.mjs",
+    "check:setup": "node scripts/runtime/sync-agent-setup.mjs --check"
+  }
+}

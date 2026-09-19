@@ -1,0 +1,36 @@
+{
+  "$schema": "./browser-evidence-manifest.schema.json",
+  "schemaVersion": 1,
+  "manifestType": "template",
+  "evidenceStatus": "not-collected",
+  "journey": "project-alpha-settings-authorization",
+  "capturedAt": null,
+  "environment": "local-fictional",
+  "baseUrl": "https://example.invalid",
+  "browser": "chromium",
+  "viewport": { "width": 390, "height": 844 },
+  "profile": "restricted",
+  "containsPersonalData": false,
+  "steps": [
+    {
+      "number": 1,
+      "route": "/projects/project-alpha/settings",
+      "expected": "Settings entry point is absent for the restricted profile.",
+      "artifact": null,
+      "observed": null,
+      "consoleNetworkNote": null,
+      "mutationDisclosure": null,
+      "outcome": "not-run"
+    },
+    {
+      "number": 2,
+      "route": "/projects/project-alpha/settings",
+      "expected": "Direct navigation reveals no settings data.",
+      "artifact": null,
+      "observed": null,
+      "consoleNetworkNote": null,
+      "mutationDisclosure": null,
+      "outcome": "not-run"
+    }
+  ]
+}
