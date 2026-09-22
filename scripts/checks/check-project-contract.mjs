@@ -65,6 +65,7 @@ if (!existsSync(workflowPath)) {
 } else {
   const workflow = normalizeLineEndings(read(workflowPath))
   const requiredFragments = [
+    'push:\n    branches:\n      - main',
     'permissions:\n  contents: read',
     'concurrency:',
     'timeout-minutes:',

@@ -39,7 +39,7 @@ snapshot. No source file was copied verbatim.
 | `.github/instructions/plans-reports.instructions.md` | Plan skills, repository instructions | Combined from several sources | Lifecycle directories mapped to reference examples |
 | `.github/instructions/infrastructure-deployment.instructions.md` | Infrastructure skills, repository instructions | Combined from several sources | Account, route, worker, and environment details removed |
 | `.github/instructions/markdown.instructions.md` | `.github/instructions/markdown.instructions.md` | Condensed | Tooling details reduced to portable rules |
-| `.github/workflows/reference-checks.yml` | Program CI requirement | Newly created | Read-only checks; no secrets, deployment, or private runner names |
+| `.github/workflows/reference-checks.yml` | Program CI requirement | Updated after pull-request verification | Read-only PR checks run once; main remains checked without secrets or deployment |
 | `docs/architecture.md` | Workshop standards, agent catalogs | Rewritten generically | Product architecture removed |
 | `docs/agent-routing.md` | Workshop standards, agent catalog | Condensed | Only selected roles retained |
 | `docs/plan-lifecycle.md` | Plan review, operations, and HV skills | Combined from several sources | Repository lifecycle paths generalized |
