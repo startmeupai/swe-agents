@@ -45,9 +45,11 @@ included. Sanitization scans are heuristic and still require human review.
 - The initial hosted Windows job failed because generated text comparisons were
   sensitive to checkout line endings; the open-source-readiness change adds LF
   policy and normalized comparison.
+- The open-source-readiness pull request passed the hosted Ubuntu and Windows
+  reference checks and CodeQL on 2026-09-22.
 
-The current change must record its own local and hosted results before merge or
-release.
+The first tagged release must still pass the same hosted checks from its release
+commit.
 
 ## Runtime Smoke Checks — Still Required
 
