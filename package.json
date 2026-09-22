@@ -1,8 +1,9 @@
 {
-  "name": "workshop-agentic-engineering-reference",
-  "version": "0.0.0-private",
+  "name": "swe-agents",
+  "version": "0.1.0",
   "private": true,
-  "description": "Sanitized reference for evidence-driven agentic software engineering.",
+  "description": "Portable Codex, Claude Code, and GitHub Copilot agentic engineering reference.",
+  "license": "Apache-2.0",
   "type": "module",
   "engines": {
     "node": "22.15.0",

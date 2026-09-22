@@ -1,41 +1,58 @@
-# Publication Review Checklist
+# Public Readiness Review Checklist
 
-## Local Review — 2026-09-19
+## Recorded Local Review — 2026-09-19
 
-This review covers the reference directory only. Checked items record static
-inspection and local command results; they do not represent human approval,
-live client discovery, hosted CI, or publication authority.
+This review covers the standalone reference directory. Checked items record
+static inspection and local command results; they do not represent live client
+discovery, hosted CI, or later release approval.
 
-- [x] Inspected the reference for product code, private helper imports, module names,
-  local paths, deployment accounts, credentials, and customer data; none found
-  outside split detection terms in the sanitization validator.
+- [x] Inspected the reference for product code, private helper imports, module
+  names, local paths, deployment accounts, credentials, and customer data; none
+  were found outside split detection terms in the sanitization validator.
 - [x] Generalized inherited administrator-policy and infrastructure-generator
   assumptions so they depend on the adopting project's contracts.
-- [x] Included native Codex, Claude Code, and Copilot persona/skill surfaces,
-  generated from the sanitized canonical files using independent copies.
+- [x] Included native Codex, Claude Code, and Copilot persona and skill surfaces
+  generated from sanitized canonical files using independent copies.
 - [x] Added deterministic runtime parity verification to the local check suite.
 - [x] Documented tool-specific routing and explicit instruction loading.
 
 The source map intentionally retains relative donor artifact paths, and
 `PROVENANCE.json` retains a private base revision. These are provenance metadata,
 not product implementations. No donor repository URL or local checkout path is
-included. Sanitization scans are heuristic and require the human review below.
+included. Sanitization scans are heuristic and still require human review.
 
-## Recorded Local Verification
+## Open-Source Readiness — 2026-09-22
 
-- `pnpm check:all` passed using Node 22.15.0 and pnpm 10.33.1: 21 canonical
-  personas, 23 canonical skills, 89 generated runtime files, 130 local Markdown
-  links, and 192 mapped/scanned artifacts.
-- Isolated-copy checks rejected runtime drift, stale agents, missing skills,
-  and a donor-specific helper name. No failure fixtures remain in this project.
-- No application TypeScript, application lint, browser, provider, or deployment
-  checks apply to this documentation-and-Node-script reference. There is no
-  `typecheck` script; the enclosing application's checks were not used as proof.
+- [x] Added an Apache-2.0 license.
+- [x] Replaced private-staging language in public documentation.
+- [x] Actual maintainers are configured in `.github/CODEOWNERS`.
+- [x] Documented the fork, branch, verification, and pull-request workflow.
+- [x] Added a code of conduct, support policy, issue forms, and pull-request
+  template.
+- [x] Documented GitHub private vulnerability reporting and a fallback contact.
+- [x] Kept package-registry publication disabled with `private: true`.
+- [x] Added deterministic LF handling for generated runtime comparisons.
+
+## Recorded Verification
+
+- `pnpm install --frozen-lockfile` and `pnpm check:all` passed locally on
+  2026-09-22 using Node 22.15.0 and pnpm 10.33.1 after the
+  open-source-readiness change.
+- The workflow and issue-form YAML files parsed successfully on 2026-09-22.
+- `pnpm check:all` passed locally on 2026-09-19 using Node 22.15.0 and pnpm
+  10.33.1 before the open-source-readiness change.
+- The initial hosted Linux job passed on 2026-09-19.
+- The initial hosted Windows job failed because generated text comparisons were
+  sensitive to checkout line endings; the open-source-readiness change adds LF
+  policy and normalized comparison.
+
+The current change must record its own local and hosted results before merge or
+release.
 
 ## Runtime Smoke Checks — Still Required
 
-Use this directory as a standalone project. Record client/version, operating
-system, selected agent/skill, and observed result for each test.
+Use this directory as a standalone project. Record client and version,
+operating system, selected agent or skill, and observed result for each test.
 
 - [ ] Codex discovers the custom agents and skills and successfully delegates a
   read-only reference review to `research-agent`.
@@ -43,10 +60,10 @@ system, selected agent/skill, and observed result for each test.
   successfully invokes `research-agent` for a read-only reference review.
 - [ ] Copilot exposes `research-agent` in the agent picker and discovers its
   referenced skill during a read-only reference review.
-- [ ] Cross-platform runtime compatibility has been tested.
+- [ ] Cross-platform runtime compatibility has been manually smoke-tested.
 - [ ] The GitHub Actions Linux and Windows matrix passes on the release commit.
 
-## Human Publication Approval — Still Required
+## Human Release Review — Still Required
 
 - [ ] Technical accuracy has been reviewed by an experienced engineer.
 - [ ] Private information, customer names, identifiers, and domains are absent.
@@ -55,8 +72,5 @@ system, selected agent/skill, and observed result for each test.
 - [ ] Validation scripts are portable and fail with actionable messages.
 - [ ] Every local Markdown link has been reviewed after final restructuring.
 - [ ] Fictional examples are clear, minimal, and internally consistent.
-- [ ] Actual maintainers are configured in `.github/CODEOWNERS`.
-- [ ] A private security reporting channel and response policy are configured.
 - [ ] Provenance metadata and the source map match the release snapshot.
-- [ ] The owner has selected and added an appropriate license.
-- [ ] Final human approval for publication has been recorded.
+- [ ] Final human approval for the first tagged release has been recorded.

@@ -24,8 +24,8 @@ workflow runs**.
 - `subagents-validator-agent`.
 
 Every persona is stored in [`agents/`](agents/) and references only skills that
-exist in [`skills/`](skills/). Use the catalog in [README.md](README.md) for
-skill selection.
+exist in [`skills/`](skills/). Use the
+[routing guide](../docs/agent-routing.md) for skill selection.
 
 Canonical Copilot profiles use `*.agent.md`. Run `pnpm sync:setup` after changes
 to regenerate Codex TOML profiles, Claude subagents, and both skill copies.

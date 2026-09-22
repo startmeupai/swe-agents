@@ -2,7 +2,8 @@
 
 Use [`.github/copilot-instructions.md`](.github/copilot-instructions.md) as the
 repository-wide rule set, [`.github/AGENTS.md`](.github/AGENTS.md) for ownership
-routing, and [`.github/README.md`](.github/README.md) for workflow routing.
+routing, and [`docs/agent-routing.md`](docs/agent-routing.md) for workflow
+routing.
 
 Native subagents live in [`.claude/agents/`](.claude/agents/) and discoverable
 skills in [`.claude/skills/`](.claude/skills/). These are generated independent

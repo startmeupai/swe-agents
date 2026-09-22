@@ -26,12 +26,12 @@ if (provenance) {
   }
   if (provenance.derivation?.sourceMap !== 'SOURCE_MAP.md') failures.push('PROVENANCE.json: source map must be SOURCE_MAP.md')
   if (provenance.derivation?.byteForByteCopy !== false) failures.push('PROVENANCE.json: byteForByteCopy must be false')
-  if (provenance.publication?.status !== 'on-hold') failures.push('PROVENANCE.json: publication must remain on hold')
-  if (provenance.publication?.license !== 'not-selected') failures.push('PROVENANCE.json: license must remain not-selected')
+  if (provenance.publication?.status !== 'public') failures.push('PROVENANCE.json: publication status must be public')
+  if (provenance.publication?.license !== 'Apache-2.0') failures.push('PROVENANCE.json: license must be Apache-2.0')
 
   const serialized = JSON.stringify(provenance)
   const localPathPatterns = [/\/Users\//, /\/home\//, /[A-Za-z]:[\\/]Users[\\/]/]
   if (localPathPatterns.some(pattern => pattern.test(serialized))) failures.push('PROVENANCE.json: local path detected')
 }
 
-finish('Provenance check', failures, 'Provenance check passed: private base revision and publication hold are explicit.')
+finish('Provenance check', failures, 'Provenance check passed: private source revision and public-license state are explicit.')

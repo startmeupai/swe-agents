@@ -9,6 +9,8 @@ const workspacePath = join(root, 'pnpm-workspace.yaml')
 const nodeVersionPath = join(root, '.nvmrc')
 const workflowPath = join(root, '.github/workflows/reference-checks.yml')
 const codeownersPath = join(root, '.github/CODEOWNERS')
+const licensePath = join(root, 'LICENSE')
+const attributesPath = join(root, '.gitattributes')
 const reviewPath = join(root, 'REVIEW_CHECKLIST.md')
 
 function normalizeLineEndings(content) {
@@ -26,11 +28,22 @@ const nodeVersion = read(nodeVersionPath).trim()
 if (!/^22\.\d+\.\d+$/.test(nodeVersion)) failures.push('.nvmrc: expected an exact Node.js 22 version')
 if (packageJson) {
   if (packageJson.private !== true) failures.push('package.json: private must remain true')
+  if (packageJson.name !== 'swe-agents') failures.push('package.json: package name must be swe-agents')
+  if (!/^\d+\.\d+\.\d+$/.test(packageJson.version)) failures.push('package.json: expected a public semantic version')
+  if (packageJson.license !== 'Apache-2.0') failures.push('package.json: license must be Apache-2.0')
   if (packageJson.engines?.node !== nodeVersion) failures.push('package.json: engines.node must match .nvmrc exactly')
   const pnpmVersion = packageJson.packageManager?.match(/^pnpm@(\d+\.\d+\.\d+)$/)?.[1]
   if (!pnpmVersion) failures.push('package.json: packageManager must pin an exact pnpm version')
   if (packageJson.engines?.pnpm !== pnpmVersion) failures.push('package.json: engines.pnpm must match packageManager')
   if (!packageJson.scripts?.['check:all']) failures.push('package.json: check:all script is required')
+}
+
+if (!existsSync(licensePath) || !read(licensePath).includes('Apache License')) {
+  failures.push('LICENSE: Apache-2.0 license text is required')
+}
+
+if (!existsSync(attributesPath) || !normalizeLineEndings(read(attributesPath)).includes('* text=auto eol=lf')) {
+  failures.push('.gitattributes: repository text files must use LF line endings')
 }
 
 if (!existsSync(lockPath)) {
@@ -69,15 +82,17 @@ if (!existsSync(workflowPath)) {
   if (workflow.includes('${{ secrets.')) failures.push('reference-checks.yml: reference checks must not consume secrets')
 }
 
-if (!existsSync(codeownersPath)) failures.push('.github/CODEOWNERS: ownership policy template is missing')
+if (!existsSync(codeownersPath)) failures.push('.github/CODEOWNERS: ownership policy is missing')
 else {
   const activeRules = read(codeownersPath).split(/\r?\n/).filter(line => line.trim() && !line.trim().startsWith('#'))
-  if (activeRules.length > 0) failures.push('.github/CODEOWNERS: do not invent owners before the repository owner supplies them')
+  if (!activeRules.some(line => line.includes('@nhawat'))) {
+    failures.push('.github/CODEOWNERS: an active maintainer must own the repository')
+  }
 }
 
 const review = read(reviewPath)
-if (!review.includes('- [ ] Actual maintainers are configured in `.github/CODEOWNERS`.')) {
-  failures.push('REVIEW_CHECKLIST.md: CODEOWNERS publication gate is missing')
+if (!review.includes('- [x] Actual maintainers are configured in `.github/CODEOWNERS`.')) {
+  failures.push('REVIEW_CHECKLIST.md: CODEOWNERS readiness evidence is missing')
 }
 
-finish('Project-contract check', failures, 'Project contract passed: runtime, package manager, CI, and ownership hold are consistent.')
+finish('Project-contract check', failures, 'Project contract passed: runtime, package manager, CI, license, and ownership policy are consistent.')
