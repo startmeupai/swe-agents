@@ -9,6 +9,11 @@ if (process.argv.slice(2).some(argument => argument !== '--check')) {
 }
 const outputs = new Map()
 const failures = symbolicLinks(root).map(path => `${label(path)}: symbolic links are not portable`)
+
+function normalizedText(content) {
+  return Buffer.from(content).toString('utf8').replace(/\r\n/g, '\n')
+}
+
 finish('Runtime source safety', failures, 'Runtime sources contain no symbolic links.')
 const agents = walk(join(root, '.github/agents'), path => path.endsWith('.agent.md'))
 const skills = walk(join(root, '.github/skills'))
@@ -51,10 +56,10 @@ for (const directory of ['.codex/agents', '.claude/agents', '.agents/skills', '.
 finish('Runtime inventory', failures, 'Runtime inventory contains no stale artifacts.')
 for (const [path, content] of outputs) {
   const target = join(root, path)
-  const expected = Buffer.from(content)
+  const expected = normalizedText(content)
   if (check) {
     if (!existsSync(target) || !lstatSync(target).isFile()) failures.push(`${path}: missing runtime file`)
-    else if (!readFileSync(target).equals(expected)) failures.push(`${path}: differs from canonical setup; run pnpm sync:setup`)
+    else if (normalizedText(readFileSync(target)) !== expected) failures.push(`${path}: differs from canonical setup; run pnpm sync:setup`)
   } else {
     mkdirSync(dirname(target), { recursive: true })
     writeFileSync(target, expected)

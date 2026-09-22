@@ -1,0 +1,46 @@
+name: Feature request
+description: Propose a portable improvement to the reference.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or opportunity
+      description: What contributor or adopter need is not currently met?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the smallest portable change that addresses the need.
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Primary surface
+      options:
+        - Instructions
+        - Agent persona
+        - Skill
+        - Deterministic check
+        - Example or documentation
+        - Runtime compatibility
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Explain why an existing persona, skill, or check is insufficient.
+  - type: checkboxes
+    id: portability
+    attributes:
+      label: Portability
+      options:
+        - label: The proposal does not depend on private product code or credentials.
+          required: true

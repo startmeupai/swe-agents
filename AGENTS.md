@@ -16,9 +16,9 @@ then load the narrowest matching instruction, persona, and skill.
 
 ## Routing
 
-The detailed catalogs are [`.github/AGENTS.md`](.github/AGENTS.md) and
-[`.github/README.md`](.github/README.md). Path-scoped rules live in
-[`.github/instructions/`](.github/instructions/).
+The persona catalog is [`.github/AGENTS.md`](.github/AGENTS.md), and detailed
+routing guidance is in [`docs/agent-routing.md`](docs/agent-routing.md).
+Path-scoped rules live in [`.github/instructions/`](.github/instructions/).
 
 ## Codex Setup
 

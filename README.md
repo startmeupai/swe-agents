@@ -1,176 +1,135 @@
-# Agentic Engineering Reference
+# SWE Agents
 
-This local, sanitized project demonstrates how to organize AI-assisted software
-engineering around durable instructions, specialized ownership, reusable
-workflows, deterministic checks, evidence, and explicit authority boundaries.
-It is a teaching reference, not an application starter or a copy of any product.
+[![Reference checks](https://github.com/startmeupai/swe-agents/actions/workflows/reference-checks.yml/badge.svg)](https://github.com/startmeupai/swe-agents/actions/workflows/reference-checks.yml)
+[![License](https://img.shields.io/github/license/startmeupai/swe-agents)](LICENSE)
 
-> **Publication hold:** The owner must select an open-source license and complete
-> the human review checklist before publishing this project.
+A portable reference for organizing AI-assisted software engineering across
+Codex, Claude Code, and GitHub Copilot.
 
-The repository is suitable for private staging and review. It is not a public
-release, a completed curriculum, or a deployable application.
+SWE Agents separates durable repository instructions, specialist ownership,
+reusable skills, deterministic checks, and evidence. Use it to study or adapt an
+agentic engineering operating model without importing product code, credentials,
+provider accounts, or deployable infrastructure.
 
-## Purpose and Non-Goals
+This is a teaching reference, not an application starter or a finished software
+product.
 
-The project explains a research-to-production operating model that keeps
-implementation speed separate from proof. It includes generic patterns for
-planning, delivery, browser verification, RBAC, security, CI, and infrastructure.
+## What Is Included
 
-It intentionally contains no application code, credentials, production
-configuration, customer data, private domains, provider accounts, or deployable
-cloud resources. The examples are fictional and use `ExampleApp`, `Project
-Alpha`, and `example.invalid`.
+- Canonical custom-agent personas and skills for planning, implementation,
+  verification, security, UI, testing, CI, and infrastructure work.
+- Generated runtime surfaces for Codex and Claude Code, plus native GitHub
+  Copilot definitions.
+- Portable Node.js checks for catalog consistency, links, provenance,
+  sanitization, secrets, runtime parity, and Markdown quality.
+- Fictional examples of plans, handoffs, reports, and browser-evidence records.
+- Explicit boundaries between automated checks, runtime proof, provider proof,
+  deployment proof, and human approval.
 
-## System Layers
+## Quick Start
 
-| Layer | Question | Location |
-| --- | --- | --- |
-| Instructions | What durable constraints apply? | [`AGENTS.md`](AGENTS.md), [`.github/instructions/`](.github/instructions/) |
-| Agents | Who owns the work? | [`.github/agents/`](.github/agents/) |
-| Skills | How does the workflow run? | [`.github/skills/`](.github/skills/) |
-| Tools | What can inspect or operate systems? | Runtime-specific and intentionally not configured here |
-| Scripts | What can be checked deterministically? | [`scripts/checks/`](scripts/checks/) |
-| Plans and reports | Where are decisions and evidence preserved? | [`examples/`](examples/) |
+Use Node.js 22.15.0 and the pnpm version pinned in `package.json`.
 
-Agents describe ownership and boundaries. Skills contain bounded procedures.
-Instructions state stable rules. Tools act on systems. Scripts return repeatable
-pass/fail results. Plans and reports preserve state beyond a chat session.
+```bash
+git clone https://github.com/startmeupai/swe-agents.git
+cd swe-agents
+corepack enable
+pnpm install --frozen-lockfile
+pnpm check:all
+```
 
-## Codex, Claude Code, and GitHub Copilot Setup
+Open the cloned directory as its own project. The three supported clients use
+different discovery surfaces:
 
-Open this directory as its own project so the enclosing checkout's instructions
-and configuration are outside the reference project root.
-
-| Tool | Instructions | Native personas | Discoverable skills |
+| Tool | Instructions | Personas | Skills |
 | --- | --- | --- | --- |
 | Codex | `AGENTS.md` | `.codex/agents/*.toml` | `.agents/skills/*/SKILL.md` |
 | Claude Code | `CLAUDE.md` | `.claude/agents/*.md` | `.claude/skills/*/SKILL.md` |
 | GitHub Copilot | `.github/copilot-instructions.md` | `.github/agents/*.agent.md` | `.github/skills/*/SKILL.md` |
 
-The canonical personas and skills live under `.github/`. Run `pnpm sync:setup`
-after editing them; it regenerates standalone runtime copies without symlinks.
-Run `pnpm check:setup` to detect missing or stale generated files. `pnpm check:all`
-includes this check. No account, model, MCP server, credential, deployment target,
-or product code is bundled.
+Client availability and invocation syntax can vary by product version. Persona
+examples such as `@research-agent` express routing intent rather than a command
+that is guaranteed to work in every client.
 
-Persona examples such as `@research-agent` express routing intent, not a command
-syntax shared by every tool. In Codex, ask it to delegate to the named custom
-agent; in Claude Code, use `/agents` or ask for the named subagent; in Copilot,
-select the custom agent in the agent picker. Availability depends on the client.
-For Codex and Claude, explicitly read the relevant `.github/instructions/` files.
-Static parity checks do not prove that a tool loaded or invoked an agent; record
-those smoke checks separately in the publication checklist.
+## Canonical and Generated Files
 
-## Recommended Lifecycle
+Canonical personas and skills live under `.github/`. The Codex and Claude Code
+copies are generated from those files and are committed so a clone works without
+an extra setup step.
 
-1. A human states intent, scope, authority, and acceptance criteria.
-2. `research-agent` establishes codebase facts with evidence.
-3. `planning-agent` produces one staged plan with specialist ownership.
-4. `plan-critic-agent` removes blocking design defects before wide writes.
-5. `plan-operations-agent` coordinates continuous execution and stage writeback.
-6. Specialists implement only the workstreams they own.
-7. Deterministic checks prove static, test, policy, and build claims.
-8. Independent audit and browser workflows verify plan and runtime behavior.
-9. Provider, deployment, human, and production gates remain distinct.
-10. Sanitized operational evidence informs the next iteration.
-
-See [agent routing](docs/agent-routing.md), [plan lifecycle](docs/plan-lifecycle.md),
-and the [verification model](docs/verification-model.md).
-
-## Conditional Specialist Routing
-
-Use only the specialists required by the task. A browser defect goes to the
-investigator, broad browser coverage to the generator, a failing specification
-to the healer, RBAC to the RBAC owner, and infrastructure to its infrastructure
-owner. Do not force every change through an identical agent chain.
-
-## Shared-Checkout Write Safety
-
-Assume other people or agents may share the checkout and Git index. Assign
-disjoint write ownership, inspect existing changes, edit only authorized files,
-and never revert, stash, stage, commit, or publish another worker's changes.
-Read-only research can run in parallel; overlapping contract changes should be
-serialized.
-
-## Deterministic Verification
-
-Use the exact Node.js version in [`.nvmrc`](.nvmrc). The package pins pnpm and
-commits its lockfile; every check itself uses only Node.js standard-library APIs.
+After editing a canonical persona or skill, run:
 
 ```bash
-corepack enable
-pnpm install --frozen-lockfile
-pnpm check:setup
-pnpm check:agents
-pnpm check:skills
-pnpm check:references
-pnpm check:sanitization
-pnpm lint:markdown
+pnpm sync:setup
 pnpm check:all
 ```
 
-Each command proves only its named layer. A green static check does not prove a
-browser journey, provider action, deployment, or human approval.
+Commit the canonical change and every generated change together. Do not edit
+`.codex/agents/`, `.claude/agents/`, `.agents/skills/`, or `.claude/skills/`
+directly.
 
-The workflow in [`.github/workflows/reference-checks.yml`](.github/workflows/reference-checks.yml)
-runs the frozen install and full check suite on Linux and Windows. The workflow
-file is not evidence that either hosted job has run; the publication checklist
-keeps that gate open until GitHub records both results.
+## Operating Model
 
-## Browser Evidence Example
+1. A human defines intent, scope, authority, and acceptance criteria.
+2. Research establishes repository facts with evidence.
+3. Planning turns those facts into staged, reviewable work.
+4. Specialists implement only the workstreams they own.
+5. Deterministic checks prove static, test, policy, and build claims.
+6. Independent review and runtime workflows verify behavior.
+7. Provider, deployment, security, and human gates remain explicit.
+8. Sanitized evidence informs the next iteration.
 
-The tracked browser manifest is a schema-validated template, not runtime proof.
-Its status is `not-collected`, each step is `not-run`, and it references no
-screenshots. A collected evidence manifest must include timestamps, observations,
-console/network notes, mutation disclosures, and existing non-empty PNG files.
-The deterministic browser-evidence check rejects missing or duplicate artifacts
-and prevents templates from claiming a pass.
+Choose the narrowest persona that owns the outcome. Load only the skills needed
+for that task. See [agent routing](docs/agent-routing.md), the
+[architecture](docs/architecture.md), and the
+[verification model](docs/verification-model.md).
 
-## Provenance and Repository Operations
+## Repository Structure
 
-[`PROVENANCE.json`](PROVENANCE.json) records the private source base revision and
-explicitly avoids claiming a clean worktree or byte-for-byte ancestry.
-[`SOURCE_MAP.md`](SOURCE_MAP.md) records artifact-level derivation. Neither file
-contains a local filesystem path.
+| Location | Purpose |
+| --- | --- |
+| `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` | Runtime entry points |
+| `.github/agents/` | Canonical specialist personas |
+| `.github/skills/` | Canonical reusable workflows |
+| `.github/instructions/` | Durable and path-scoped constraints |
+| `.codex/`, `.claude/`, `.agents/` | Generated runtime copies |
+| `scripts/checks/` | Deterministic validation |
+| `examples/` | Fictional plans, reports, handoffs, and evidence |
+| `docs/` | Architecture and operating guidance |
 
-Contribution, security, ownership, and release expectations are documented in
-[`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), the
-[comment-only CODEOWNERS template](.github/CODEOWNERS), and
-[`docs/releases-and-versioning.md`](docs/releases-and-versioning.md). Actual
-owners, a private reporting contact, licensing, CI results, and publication
-approval remain open human gates.
+## Adapting the Reference
 
-## Least Privilege
-
-Give an agent only the read/write scope, environment, resource, and duration it
-needs. Prefer read-only credentials. Re-authorize mutations at apply time.
-Never let model output directly authorize writes, tool calls, or tenant access.
-Production-impacting and destructive actions require explicit authority.
-
-## Adapting This Reference
-
-1. Replace the fictional directory conventions with the destination repository's.
-2. Keep the instruction/agent/skill separation intact.
-3. Remove personas and skills that have no real owner or workflow.
+1. Replace the fictional directory conventions with those of your repository.
+2. Keep instructions, personas, skills, tools, and evidence distinct.
+3. Remove specialist roles that do not have a real workflow or owner.
 4. Add repository-specific deterministic checks before adding prose rules.
-5. Define plan/report directories and lifecycle transitions explicitly.
-6. Add access profiles without embedding credentials or personal information.
-7. Update [`SOURCE_MAP.md`](SOURCE_MAP.md) for every adapted artifact.
-8. Run all checks and complete [`REVIEW_CHECKLIST.md`](REVIEW_CHECKLIST.md).
+5. Define where plans, reports, and runtime evidence are stored.
+6. Configure access without embedding credentials or personal information.
+7. Update `SOURCE_MAP.md` for every tracked artifact change.
+8. Run `pnpm check:all` and record any runtime checks separately.
 
-## Human Review Before Publication
+## Contributing
 
-The owner must verify technical accuracy, sanitization, naming, trigger quality,
-script portability, cross-platform runtime behavior, examples, and licensing.
-The authoritative open list is [`REVIEW_CHECKLIST.md`](REVIEW_CHECKLIST.md).
+Issues and pull requests are welcome. Start with
+[`CONTRIBUTING.md`](CONTRIBUTING.md), follow the
+[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and use
+[`SUPPORT.md`](SUPPORT.md) to choose the right support channel.
 
-## Further Reading
+For a security vulnerability, use the repository's
+[private vulnerability reporting](https://github.com/startmeupai/swe-agents/security/advisories/new)
+instead of a public issue. See [`SECURITY.md`](SECURITY.md).
+
+## Documentation
 
 - [Architecture](docs/architecture.md)
 - [Agent routing](docs/agent-routing.md)
 - [Plan lifecycle](docs/plan-lifecycle.md)
 - [Verification model](docs/verification-model.md)
 - [Security boundaries](docs/security-boundaries.md)
+- [Releases and versioning](docs/releases-and-versioning.md)
 - [Workshop example](docs/workshop-example.md)
 - [Source map](SOURCE_MAP.md)
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE).

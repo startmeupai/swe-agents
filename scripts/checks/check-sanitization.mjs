@@ -6,7 +6,6 @@ const files = walk(root, path => basename(path) !== ownFile)
 const failures = []
 const forbiddenTerms = [
   ['byblos', 'ai'].join(''),
-  ['start', 'meup'].join(''),
   ['smu', 'ai'].join(''),
   ['ced', 'ra'].join(''),
   ['kal', 'da'].join(''),

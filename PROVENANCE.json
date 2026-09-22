@@ -14,8 +14,8 @@
     "byteForByteCopy": false
   },
   "publication": {
-    "status": "on-hold",
-    "license": "not-selected",
+    "status": "public",
+    "license": "Apache-2.0",
     "reviewChecklist": "REVIEW_CHECKLIST.md"
   }
 }

@@ -8,19 +8,27 @@ snapshot. No source file was copied verbatim.
 | `README.md` | `docs/swe/swe-standards-with-ai.md`, root entrypoints | Combined from several sources | Product, event, provider-account, and local-path details removed |
 | `AGENTS.md` | `AGENTS.md`, `.github/AGENTS.md` | Condensed | Repository-specific architecture and branch policy removed |
 | `CLAUDE.md` | `CLAUDE.md` | Rewritten generically | Native Claude discovery uses generated independent copies |
-| `REVIEW_CHECKLIST.md` | User brief | Newly created | Static review evidence separated from unrun runtime and publication gates |
+| `REVIEW_CHECKLIST.md` | User brief | Updated for public readiness | Static, hosted, runtime, and human evidence remain separate |
 | `SOURCE_MAP.md` | User brief | Newly created | Repository-relative provenance only |
-| `CONTRIBUTING.md` | Extraction-readiness audit | Newly created | Private staging and review guidance only |
-| `SECURITY.md` | Extraction-readiness audit | Newly created | No private contact or response commitment invented |
-| `PROVENANCE.json` | Source snapshot metadata | Newly created | Private base revision retained without repository URL or local path |
+| `CONTRIBUTING.md` | Extraction-readiness audit | Updated for public contributions | Fork, canonical-source, generation, check, and pull-request workflow documented |
+| `SECURITY.md` | Extraction-readiness audit | Updated for public reporting | Private vulnerability reporting is primary; public fallback contact only |
+| `CODE_OF_CONDUCT.md` | Contributor Covenant 2.1 | Adapted for the project | Public enforcement contact configured |
+| `SUPPORT.md` | GitHub community-health guidance | Newly created | Public support and private security routes separated |
+| `LICENSE` | Apache License 2.0 | Added verbatim | No legal entity or copyright owner inferred |
+| `PROVENANCE.json` | Source snapshot metadata | Updated for public release | Private base revision retained; public license state recorded without source URL or local path |
 | `package.json` | User brief, source validation scripts | Rewritten generically | No dependencies or private commands |
 | `pnpm-lock.yaml` | Pinned package-manager output | Newly generated | Empty dependency graph only |
 | `pnpm-workspace.yaml` | Standalone extraction boundary | Newly created | Empty package list prevents parent-workspace inheritance |
 | `.nvmrc` | Program toolchain requirement | Newly created | Exact public Node.js version only |
 | `.gitignore` | Root `.gitignore` conventions | Condensed | Only generic local outputs and environment files |
-| `.github/CODEOWNERS` | Extraction-readiness audit | Newly created | Comment-only template; no owner identity inferred |
+| `.gitattributes` | Hosted Windows CI failure | Newly created | Text checkout uses deterministic LF endings |
+| `.github/CODEOWNERS` | Extraction-readiness audit | Updated for public maintenance | Active organization owner initially owns all tracked surfaces |
+| `.github/PULL_REQUEST_TEMPLATE.md` | GitHub community-health guidance | Newly created | Verification and safety claims must be explicit |
+| `.github/ISSUE_TEMPLATE/bug_report.yml` | GitHub issue-form guidance | Newly created | Sensitive information is prohibited |
+| `.github/ISSUE_TEMPLATE/feature_request.yml` | GitHub issue-form guidance | Newly created | Portable scope and reuse are prompted |
+| `.github/ISSUE_TEMPLATE/question.yml` | GitHub issue-form guidance | Newly created | Public support requests exclude private data |
+| `.github/ISSUE_TEMPLATE/config.yml` | GitHub issue-form guidance | Newly created | Security reports route to private advisories |
 | `.github/AGENTS.md` | `.github/AGENTS.md` | Condensed | Only selected personas retained |
-| `.github/README.md` | `.github/README.md` | Condensed | Product-specific routing removed |
 | `.github/copilot-instructions.md` | `.github/copilot-instructions.md` | Rewritten generically | Branch, module, and product rules removed |
 | `.github/instructions/global.instructions.md` | `.github/instructions/global.instructions.md` | Condensed | Framework- and product-specific rules removed |
 | `.github/instructions/typescript.instructions.md` | `.github/instructions/typescript.instructions.md` | Condensed | Project path aliases removed |
@@ -31,13 +39,13 @@ snapshot. No source file was copied verbatim.
 | `.github/instructions/plans-reports.instructions.md` | Plan skills, repository instructions | Combined from several sources | Lifecycle directories mapped to reference examples |
 | `.github/instructions/infrastructure-deployment.instructions.md` | Infrastructure skills, repository instructions | Combined from several sources | Account, route, worker, and environment details removed |
 | `.github/instructions/markdown.instructions.md` | `.github/instructions/markdown.instructions.md` | Condensed | Tooling details reduced to portable rules |
-| `.github/workflows/reference-checks.yml` | Program CI requirement | Newly created | Read-only checks; no secrets, deployment, or private runner names |
+| `.github/workflows/reference-checks.yml` | Program CI requirement | Updated after pull-request verification | Read-only PR checks run once; main remains checked without secrets or deployment |
 | `docs/architecture.md` | Workshop standards, agent catalogs | Rewritten generically | Product architecture removed |
 | `docs/agent-routing.md` | Workshop standards, agent catalog | Condensed | Only selected roles retained |
 | `docs/plan-lifecycle.md` | Plan review, operations, and HV skills | Combined from several sources | Repository lifecycle paths generalized |
 | `docs/verification-model.md` | Workshop standards | Condensed | Private commands and environments removed |
 | `docs/security-boundaries.md` | Security auditor persona and audit skills | Combined from several sources | Private security primitives removed |
-| `docs/releases-and-versioning.md` | Extraction-readiness audit | Newly created | Publication remains blocked pending owner decisions |
+| `docs/releases-and-versioning.md` | Extraction-readiness audit | Updated for public releases | Package publication remains disabled; release evidence stays explicit |
 | `docs/workshop-example.md` | Workshop standards, user brief | Rewritten generically | Fictional entities and reserved domain used |
 | `.github/agents/research-agent.agent.md` | `.github/agents/research-agent.md` | Condensed | Product-specific domain knowledge removed |
 | `.github/agents/planning-agent.agent.md` | `.github/agents/planning-agent.md` | Condensed | Product UI rules removed |
@@ -97,14 +105,14 @@ snapshot. No source file was copied verbatim.
 | `scripts/checks/validate-skills.mjs` | `scripts/checks/check-skill-surface-parity.ts` | Rewritten generically | Symlink/runtime topology omitted |
 | `scripts/checks/check-agent-skill-references.mjs` | Source parity scripts | Newly created | Local project references only |
 | `scripts/checks/check-markdown-links.mjs` | Markdown lint script, user brief | Newly created | Network links are not fetched |
-| `scripts/checks/check-referenced-files.mjs` | User brief | Newly created | Generic required structure only |
+| `scripts/checks/check-referenced-files.mjs` | User brief | Updated for public readiness | License, community, and contribution surfaces are required |
 | `scripts/checks/check-duplicate-names.mjs` | Source parity scripts | Rewritten generically | Catalog-local names only |
-| `scripts/checks/check-sanitization.mjs` | User brief | Newly created | Private terms represented only as split validator tokens |
+| `scripts/checks/check-sanitization.mjs` | User brief | Updated for public release | Donor terms remain blocked while the public organization identity is allowed |
 | `scripts/checks/check-secrets.mjs` | Secret-audit skill | Condensed | High-confidence patterns; matched values never printed |
 | `scripts/checks/check-artifact-paths.mjs` | Plan/report directory rules | Newly created | Reference-project paths only |
 | `scripts/checks/check-browser-evidence.mjs` | Test-and-prove evidence contract | Newly created | Validates local fictional templates and collected artifact integrity |
-| `scripts/checks/check-project-contract.mjs` | Extraction-readiness audit | Newly created | Validates only public toolchain and repository-policy metadata |
-| `scripts/checks/check-provenance.mjs` | Extraction-readiness audit | Newly created | Prevents provenance from overstating or exposing the private source |
+| `scripts/checks/check-project-contract.mjs` | Extraction-readiness audit | Updated for public readiness | Validates public toolchain, license, ownership, and line endings |
+| `scripts/checks/check-provenance.mjs` | Extraction-readiness audit | Updated for public release | Prevents provenance from overstating or exposing the private source while requiring license state |
 | `scripts/checks/check-separation.mjs` | Agent-authoring and validation skills | Newly created | Heuristic checks only |
 | `scripts/checks/check-source-map.mjs` | User brief | Newly created | Repository-relative artifact coverage only |
 | `scripts/checks/lint-markdown.mjs` | `scripts/maintenance/lint-markdown.ts` | Rewritten generically | Dependency-free rule subset |
@@ -197,4 +205,4 @@ snapshot. No source file was copied verbatim.
 | `.codex/agents/ui_agent.toml` | `.github/agents/ui-agent.agent.md` | Generated or newly created | Sanitized reference-local setup only; no external accounts or product implementation |
 | `.codex/agents/ui_sm_agent.toml` | `.github/agents/ui-sm-agent.agent.md` | Generated or newly created | Sanitized reference-local setup only; no external accounts or product implementation |
 | `.codex/config.toml` | `Portable runtime setup review` | Generated or newly created | Sanitized reference-local setup only; no external accounts or product implementation |
-| `scripts/runtime/sync-agent-setup.mjs` | `Portable runtime setup review` | Generated or newly created | Sanitized reference-local setup only; no external accounts or product implementation |
+| `scripts/runtime/sync-agent-setup.mjs` | `Portable runtime setup review` | Updated after hosted Windows failure | Generated text comparison normalizes CRLF without weakening content checks |
