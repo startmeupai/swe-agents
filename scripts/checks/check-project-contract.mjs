@@ -33,7 +33,9 @@ if (packageJson) {
     failures.push('package.json: expected a semantic version such as 1.2.3 or 1.2.3-rc.1')
   }
   if (packageJson.license !== 'Apache-2.0') failures.push('package.json: license must be Apache-2.0')
-  if (packageJson.engines?.node !== nodeVersion) failures.push('package.json: engines.node must match .nvmrc exactly')
+  // Contributors use the exact .nvmrc version; npx users only need the same major or newer.
+  const nodeMajor = nodeVersion.split('.')[0]
+  if (packageJson.engines?.node !== `>=${nodeMajor}`) failures.push(`package.json: engines.node must be ">=${nodeMajor}", the major version in .nvmrc`)
   const pnpmVersion = packageJson.packageManager?.match(/^pnpm@(\d+\.\d+\.\d+)$/)?.[1]
   if (!pnpmVersion) failures.push('package.json: packageManager must pin an exact pnpm version')
   if (packageJson.engines?.pnpm !== pnpmVersion) failures.push('package.json: engines.pnpm must match packageManager')

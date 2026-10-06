@@ -8,8 +8,11 @@
   "bin": {
     "swe-agents": "scripts/stacks/cli.mjs"
   },
+  "files": [
+    "scripts/stacks/"
+  ],
   "engines": {
-    "node": "22.15.0",
+    "node": ">=22",
     "pnpm": "10.33.1"
   },
   "packageManager": "pnpm@10.33.1",
