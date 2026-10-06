@@ -32,6 +32,9 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
+          # v5 auto-caches for the packageManager in package.json, which calls
+          # pnpm before corepack enables it; there are no dependencies to cache.
+          package-manager-cache: false
 
       - name: Enable pinned pnpm
         run: corepack enable
