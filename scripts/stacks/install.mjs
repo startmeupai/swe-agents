@@ -1,13 +1,17 @@
 import { resolve } from 'node:path'
-import { InstallError, runInstall } from './installer.mjs'
+import { InstallError, runInstall, terminalConfirm } from './installer.mjs'
 import { SourceError } from './source.mjs'
 
 // Thin command-line wrapper around installer.mjs; `swe-agents install` runs the same code.
-const usage = `Usage: node scripts/stacks/install.mjs --target <dir> (--profile <name> | --packs a,b,c) [--dry-run] [--force]
+const usage = `Usage: node scripts/stacks/install.mjs --target <dir> (--profile <name> | --packs a,b,c) [--yes] [--dry-run] [--force]
+
+Prints the plan first, then asks y/N on a terminal; without a terminal it
+writes nothing unless --yes is passed.
 
   --target <dir>     Existing repository directory to install into (required).
   --profile <name>   Install a profile from profiles/<name>.json.
   --packs a,b,c      Install an explicit pack list; required packs are added.
+  --yes              Apply the plan without asking.
   --dry-run          Print the plan and the routing table; write nothing.
   --force            Overwrite files edited since the last install and files
                      the installer did not create; remove edited files that
@@ -19,7 +23,7 @@ function fail(message) {
 }
 
 function parseArguments(argv) {
-  const options = { dryRun: false, force: false }
+  const options = { dryRun: false, force: false, yes: false }
   const valueOf = (argument, index) => {
     const inline = argument.indexOf('=')
     if (inline !== -1) return [argument.slice(inline + 1), index]
@@ -35,6 +39,7 @@ function parseArguments(argv) {
       console.log(usage)
       process.exit(0)
     } else if (flag === '--dry-run') options.dryRun = true
+    else if (flag === '--yes') options.yes = true
     else if (flag === '--force') options.force = true
     else if (['--target', '--profile', '--packs'].includes(flag)) {
       const [value, next] = valueOf(argument, index)
@@ -52,13 +57,15 @@ if (options.packs !== undefined && !options.packs.split(',').some(name => name.t
 // pnpm runs scripts from the package root; INIT_CWD keeps paths relative to the caller.
 const target = resolve(process.env.INIT_CWD ?? process.cwd(), options.target)
 try {
-  process.exitCode = runInstall({
+  process.exitCode = await runInstall({
     target,
     targetLabel: options.target,
     profile: options.profile ?? null,
     packs: options.packs ?? null,
     force: options.force,
-    dryRun: options.dryRun
+    dryRun: options.dryRun,
+    yes: options.yes,
+    confirm: terminalConfirm()
   })
 } catch (error) {
   if (!(error instanceof InstallError) && !(error instanceof SourceError)) throw error

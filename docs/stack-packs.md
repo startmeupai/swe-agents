@@ -157,8 +157,8 @@ clone with `pnpm swe-agents <command>` or
 ```text
 swe-agents init       [--target <dir>] [--packs a,b | --profile <name>] [--yes] [--dry-run] [--ref <git-ref>]
 swe-agents detect     [--target <dir>] [--json]
-swe-agents install    --target <dir> (--profile <name> | --packs a,b) [--dry-run] [--force]
-swe-agents update     [--target <dir>] [--dry-run] [--force] [--no-merge] [--ref <git-ref>]
+swe-agents install    --target <dir> (--profile <name> | --packs a,b) [--yes] [--dry-run] [--force]
+swe-agents update     [--target <dir>] [--yes] [--dry-run] [--force] [--no-merge] [--ref <git-ref>]
 swe-agents contribute [--target <dir>] [--slug <name>] [--base <branch>] [--apply] [--dry-run]
 swe-agents --help | --version
 ```
@@ -176,7 +176,7 @@ swe-agents --help | --version
 | `--target <dir>` | Adopting repository. Defaults to the current directory unless that is the SWE Agents checkout; `install` always requires it |
 | `--profile <name>` | Install `profiles/<name>.json`; use this or `--packs`. For `init`, replaces detection |
 | `--packs a,b` | Install an explicit list; required packs are added. For `init`, replaces detection |
-| `--yes` | `init`: accept the suggestion without prompting |
+| `--yes` | `init`, `install`, and `update`: apply the plan without asking; without a terminal, nothing is written unless it is set |
 | `--dry-run` | Print the plan; write nothing |
 | `--force` | `install` and `update`: overwrite edited, unowned, and conflicting files; remove edited files the selection no longer installs |
 | `--no-merge` | `update`: keep edited files as they are instead of merging them |
@@ -186,9 +186,11 @@ swe-agents --help | --version
 | `--base <branch>` | `contribute`: upstream branch for `--apply` and the pull request; defaults to `test` |
 | `--apply` | `contribute`: create `contrib/<slug>` in the source checkout and apply the bundle |
 
-Exit code `0` means success, `1` an error, and `2` that a human decision is
-needed or nothing was done, such as `init` without a terminal and without
-`--yes`.
+`init`, `install`, and `update` always print the plan and its notices first:
+every file to create, update, merge, or remove, every existing file kept, and
+any warning. They then ask y/N on a terminal. Exit code `0` means success, `1`
+an error, and `2` that a human decision is needed or nothing was done, such as
+a declined prompt, or no terminal and no `--yes`.
 
 ### Source Checkout
 
@@ -225,15 +227,16 @@ Detection only suggests. `init` asks before it installs, and `--packs` or
 
 ### Installation
 
-`install`, and `init` after confirmation:
+`install` and `init`, after showing the plan and getting confirmation:
 
 1. Resolves the profile or pack list, adds required packs, and fails on a
    missing pack, a cycle, a conflict, or a duplicate persona or skill name.
 2. Writes `AGENTS.md` from the core rules plus one section per installed pack.
 3. Copies personas and skills into each client's discovery paths, without
    symlinks, and creates `.github/copilot-instructions.md` only if it is absent.
-4. Refuses to overwrite a file whose hash differs from the lock file, unless
-   `--force` is set.
+4. Refuses to overwrite a file whose hash differs from the lock file, or a file
+   it did not install, unless `--force` is set, and removes only unedited files
+   it installed that the selection no longer includes.
 5. Writes `.agents/stacks.lock.json`.
 
 Each persona is written three ways: verbatim to `.claude/agents/<name>.md`,
@@ -455,7 +458,9 @@ review, and VS Code chat read. Each section states its scope in prose, so every
 client that reads `AGENTS.md` sees the same rules.
 By default, Claude Code reads `AGENTS.md` only when no `CLAUDE.md`,
 `.claude/CLAUDE.md`, or `CLAUDE.local.md` exists in the working directory or
-above it, so the installer never writes any of them. Copilot surfaces that do
+above it, so the installer never writes any of them. A `CLAUDE.md` with the
+line `@AGENTS.md` imports the rules and keeps both working; the installer warns
+while none of these files imports `AGENTS.md`. Copilot surfaces that do
 not read `AGENTS.md`, such as Copilot Chat on GitHub.com and in Visual Studio
 and JetBrains IDEs, read only the short `.github/copilot-instructions.md`
 pointer, not the pack rules it links to.
@@ -499,8 +504,9 @@ version, the operating system, and the observed result.
 
 - **Claude Code:** `/memory` or `/context` shows `AGENTS.md`, `/context` lists
   the installed personas under custom subagents, and `/skills` lists each skill
-  once. Neither the target nor any directory above it has a `CLAUDE.md`,
-  `.claude/CLAUDE.md`, or `CLAUDE.local.md`.
+  once. Either the target and the directories above it have no `CLAUDE.md`,
+  `.claude/CLAUDE.md`, or `CLAUDE.local.md`, or one of them imports
+  `@AGENTS.md`.
 - **Codex:** `/skills` lists the installed skills, and a read-only task
   delegated to `research_agent`, the persona's Codex name, completes.
 - **GitHub Copilot:** the agent picker shows the installed personas. Copilot

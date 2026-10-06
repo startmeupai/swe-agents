@@ -26,12 +26,15 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
+          # v5 auto-caches for the packageManager in package.json, which calls
+          # pnpm before corepack enables it; there are no dependencies to cache.
+          package-manager-cache: false
 
       - name: Enable pinned pnpm
         run: corepack enable
@@ -61,7 +64,7 @@ jobs:
         run: |
           target="$STACKS_TMP/stacks-install"
           mkdir -p "$target"
-          node scripts/stacks/install.mjs --target "$target" --profile python-api-docker
+          node scripts/stacks/install.mjs --target "$target" --profile python-api-docker --yes
           test -f "$target/.agents/stacks.lock.json"
           node scripts/stacks/install.mjs --target "$target" --profile python-api-docker | tee "$STACKS_TMP/stacks-reinstall.log"
           grep -qx 'Result: no changes' "$STACKS_TMP/stacks-reinstall.log"

@@ -7,7 +7,8 @@ import { loadPacks, root } from './lib.mjs'
 import { findManagedBlock, normalized, sha256 } from '../stacks/engine.mjs'
 import { detectPacks, matchGlob } from '../stacks/detect.mjs'
 import {
-  InstallError, applyPlan, lockPath, planInstall, readLock, renderAtCommit, runUpdate, serializeLock, threeWayMerge
+  InstallError, applyPlan, claudeMemoryNotice, lockPath, planInstall, readLock, renderAtCommit, reportNotices, runInstall, runUpdate,
+  serializeLock, threeWayMerge
 } from '../stacks/installer.mjs'
 import { defaultRepo, describeCheckout } from '../stacks/source.mjs'
 
@@ -125,6 +126,19 @@ try {
     assert.ok(playwright.requires.includes('typescript'), 'playwright pulls in typescript')
   })
 
+  check('detectPacks suggests web-ui for a Vite client outside app/ and components/, and not for an API', () => {
+    const client = directory('detect-vite')
+    write(client, 'tsconfig.json', '{}\n')
+    write(client, 'vite.config.ts', 'export default {}\n')
+    write(client, 'web/App.tsx', 'export function App() { return null }\n')
+    write(client, 'server/app.ts', 'export {}\n')
+    assert.deepEqual(detectPacks(client, loadPacks()).map(pack => pack.name), ['typescript', 'web-ui'])
+    const api = directory('detect-api')
+    write(api, 'tsconfig.json', '{}\n')
+    write(api, 'server/app.ts', 'export {}\n')
+    assert.deepEqual(detectPacks(api, loadPacks()).map(pack => pack.name), ['typescript'])
+  })
+
   // -------------------------------------------------------------------------
   // Three-way merge primitive
 
@@ -192,6 +206,66 @@ try {
     const plan = planInstall({ target, profile: 'python-api-docker', source })
     assert.equal(plan.lockChanged, false)
     assert.ok(plan.steps.every(item => item.action === 'unchanged' || item.action === 'keep'), 'every step is unchanged')
+  })
+
+  await checkAsync('install previews first and writes only after confirmation', async () => {
+    const fresh = directory('confirm')
+    const output = []
+    const log = line => output.push(line)
+    const install = options => runInstall({ target: fresh, profile: 'python-api-docker', source, log, ...options })
+    assert.equal(await install({}), 2)
+    assert.ok(!existsSync(join(fresh, lockPath)), 'without a terminal or yes, nothing is written')
+    assert.ok(output.some(line => line.includes('rerun with --yes')), 'the preview says how to apply it')
+    let asked = null
+    assert.equal(await install({ confirm: async question => { asked = question; return false } }), 2)
+    assert.match(asked, /Apply \d+ change\(s\) to .+\? \[y\/N\] $/)
+    assert.ok(!existsSync(join(fresh, lockPath)), 'a declined plan writes nothing')
+    assert.equal(await install({ confirm: async () => true }), 0)
+    assert.ok(existsSync(join(fresh, lockPath)), 'a confirmed plan is written')
+    let reasked = false
+    assert.equal(await install({ confirm: async () => { reasked = true; return false } }), 0)
+    assert.equal(reasked, false, 'a plan with no changes does not ask')
+  })
+
+  check('existing files the installer did not write are kept and explained', () => {
+    const owned = directory('owned')
+    write(owned, 'AGENTS.md', '# Project Alpha\n\nProject rules.\n')
+    write(owned, '.codex/config.toml', 'model = "example"\n')
+    write(owned, '.claude/agents/test-agent.md', 'Project Alpha test rules.\n')
+    write(owned, '.claude/agents/alpha-reviewer.md', 'Project Alpha reviewer.\n')
+    const plan = planInstall({ target: owned, profile: 'python-api-docker', source })
+    assert.equal(step(plan, 'AGENTS.md').action, 'append-block')
+    assert.equal(step(plan, '.codex/config.toml').action, 'skip-unowned')
+    assert.equal(step(plan, '.claude/agents/test-agent.md').action, 'skip-unowned')
+    assert.ok(!plan.steps.some(item => item.path === '.claude/agents/alpha-reviewer.md'), 'unrelated files are not planned')
+    const output = []
+    reportNotices(plan, { log: line => output.push(line) })
+    const notes = output.join('\n')
+    assert.match(notes, /Kept 2 existing file\(s\) that swe-agents did not install/)
+    assert.match(notes, /\.codex\/config\.toml: your Codex config is kept/)
+    assert.match(notes, /test-agent\.md: yours is kept/)
+    applyPlan(plan)
+    assert.equal(text(owned, '.codex/config.toml'), 'model = "example"\n')
+    assert.equal(text(owned, '.claude/agents/test-agent.md'), 'Project Alpha test rules.\n')
+    assert.equal(text(owned, '.claude/agents/alpha-reviewer.md'), 'Project Alpha reviewer.\n')
+    assert.ok(text(owned, 'AGENTS.md').startsWith('# Project Alpha\n\nProject rules.\n'), 'project rules stay first and unchanged')
+  })
+
+  check('the CLAUDE.md warning appears only when nothing imports AGENTS.md', () => {
+    const memory = directory('claude-memory')
+    assert.equal(claudeMemoryNotice(memory), null)
+    write(memory, 'CLAUDE.md', '# Project Alpha\n\nPrefer small changes.\n')
+    assert.match(claudeMemoryNotice(memory), /^Warning: CLAUDE\.md exists, so Claude Code does not read AGENTS\.md on its own\. Add the line @AGENTS\.md/)
+    write(memory, 'CLAUDE.md', 'Rules live in `@AGENTS.md`.\n')
+    assert.ok(claudeMemoryNotice(memory), 'a mention inside a code span is not an import')
+    write(memory, 'CLAUDE.md', '@AGENTS.md\n\nPrefer small changes.\n')
+    assert.equal(claudeMemoryNotice(memory), null)
+    write(memory, 'CLAUDE.md', 'Follow @./AGENTS.md first.\n')
+    assert.equal(claudeMemoryNotice(memory), null)
+    rmSync(join(memory, 'CLAUDE.md'))
+    write(memory, '.claude/CLAUDE.md', '@../AGENTS.md\n')
+    write(memory, 'CLAUDE.local.md', 'Personal notes.\n')
+    assert.equal(claudeMemoryNotice(memory), null)
   })
 
   check('readLock accepts a version 1 lock and refuses a missing commit on write', () => {
@@ -330,7 +404,7 @@ try {
 
     await checkAsync('runUpdate keeps local edits and rewrites a version 2 lock', async () => {
       const output = []
-      const code = await runUpdate({ target: updated, source, log: line => output.push(line) })
+      const code = await runUpdate({ target: updated, source, yes: true, log: line => output.push(line) })
       assert.ok([0, 2].includes(code), `update exit code ${code}`)
       assert.equal(output[0], 'swe-agents update')
       assert.equal(text(updated, persona), `${installed}${localLine}`)
@@ -362,6 +436,12 @@ try {
       const wrapper = node([join(root, 'scripts/stacks/install.mjs'), '--target', fresh, '--profile', 'python-api-docker', '--dry-run'])
       assert.equal(wrapper.status, 0, wrapper.stderr)
       assert.match(wrapper.stdout, /^Result \(dry run\): \d+ change\(s\) planned; nothing written$/m)
+      const unconfirmedInstall = node([cli, 'install', '--target', fresh, '--profile', 'python-api-docker'])
+      assert.equal(unconfirmedInstall.status, 2, unconfirmedInstall.stderr)
+      assert.ok(!existsSync(join(fresh, lockPath)), 'install without a terminal or --yes writes nothing')
+      const confirmedInstall = node([cli, 'install', '--target', fresh, '--profile', 'python-api-docker', '--yes'])
+      assert.equal(confirmedInstall.status, 0, confirmedInstall.stderr)
+      assert.ok(existsSync(join(fresh, lockPath)), 'install --yes writes')
     })
   }
 } finally {

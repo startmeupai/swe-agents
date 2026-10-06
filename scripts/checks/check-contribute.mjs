@@ -40,7 +40,7 @@ const temp = mkdtempSync(join(tmpdir(), 'swe-agents-check-contribute-'))
 const target = join(temp, 'example-target')
 try {
   mkdirSync(target)
-  execFileSync(process.execPath, [join(root, 'scripts/stacks/install.mjs'), '--target', target, '--profile', 'python-api-docker'], {
+  execFileSync(process.execPath, [join(root, 'scripts/stacks/install.mjs'), '--target', target, '--profile', 'python-api-docker', '--yes'], {
     cwd: root,
     env: { ...process.env, INIT_CWD: root },
     stdio: 'pipe'

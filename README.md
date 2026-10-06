@@ -31,33 +31,71 @@ packs declare, so the core works on its own and each pack adds to it.
 
 ## Quick Start
 
-### Start From Any Repository
+### Add SWE Agents to Your Repository
 
-Run this from the root of the repository you want to equip. It needs Node.js
-22 and Git, and no clone or global install.
+Run this from the root of your repository. You need Node.js 22 or newer and
+Git; there is nothing to clone or install globally.
 
 ```bash
 npx --yes github:startmeupai/swe-agents init
 ```
 
-`init` resolves a source checkout, then:
+`init` changes nothing until you agree:
 
-1. **Detects** which packs fit by matching each pack's `detect` patterns
-   against your files.
-2. **Suggests** a selection: each pack, its kind, the files that matched, and
-   the required packs it pulls in.
-3. **Confirms** with a y/N prompt. `--yes` accepts without prompting; without
-   a terminal and without `--yes`, it prints the plan and exits with code 2.
-4. **Installs** the core and the selected packs, and writes the lock file.
-5. **Prints next steps**: how to verify discovery in each client, how to run
-   `update` and `contribute`, and that the installed `upstream-agent` can
-   drive both.
+1. **Detects** the packs that fit, and lists each one with the files that
+   matched and the packs it pulls in.
+2. **Shows the plan**: every file it would create, update, or remove, every
+   existing file it keeps, and any warning.
+3. **Asks** `Apply N change(s) to <repository>? [y/N]`. Any answer but `y`
+   writes nothing.
+4. **Installs** the core and the packs, writes the lock file, and prints next
+   steps.
 
-Pass `--packs python,docker` or `--profile python-api-docker` to skip
-detection, and `--dry-run` to print the plan without writing. Under `npx`, the
-CLI keeps a source clone in `$SWE_AGENTS_HOME/source`, by default
-`.swe-agents/source` in your home directory, and records its exact commit in
-the lock.
+To choose the packs yourself, pass `--packs typescript,web-ui` or a profile
+such as `--profile nextjs-cloudflare`; see [Available Packs](#available-packs).
+`--dry-run` prints the plan and stops.
+
+### What It Never Does
+
+- **Overwrite or delete your files.** A file it did not install stays as it is,
+  even at a path it would use; the plan lists it as kept.
+- **Touch your text in `AGENTS.md`.** It adds one marked block below your
+  content and only ever changes that block.
+- **Overwrite your edits.** An installed file you edited is kept. `update`
+  merges your edit with the upstream change, or stops and shows the conflict.
+- **Remove anything you did not see.** It removes only files it installed, that
+  are unedited, and that your selection no longer includes, and the plan lists
+  each one first.
+- **Write `CLAUDE.md`.** If you have one, add the line `@AGENTS.md` to it so
+  Claude Code also reads the installed rules; the installer warns until it does.
+
+Only `--force` overrides these protections, and the plan shows what it would
+replace first.
+
+### Ask Your Coding Agent
+
+A coding agent cannot answer the y/N prompt, so it previews first and applies
+with `--yes` once you approve. Paste this into Claude Code, Codex, GitHub
+Copilot, or Cursor, opened in your repository:
+
+```text
+Add the SWE Agents reference (https://github.com/startmeupai/swe-agents) to this repository.
+
+1. Run: npx --yes github:startmeupai/swe-agents init --dry-run
+2. Show me the detected packs, the full plan (including every file it keeps or
+   removes), and every warning. Suggest packs to add or drop for this
+   repository and say why. Then stop and wait for my approval.
+3. After I approve, run the same command with the packs I chose as --packs,
+   without --dry-run and with --yes.
+4. Do not edit the installed files or delete anything by hand. If CLAUDE.md
+   exists, add the line @AGENTS.md to it instead of moving its content.
+5. Summarize what changed and leave it uncommitted for my review.
+```
+
+Once installed, ask the `upstream-agent` persona to pull updates from SWE
+Agents or to contribute your improvements back. Under `npx`, the CLI keeps a
+source clone in `$SWE_AGENTS_HOME/source`, by default `.swe-agents/source` in
+your home directory, and records its exact commit in the lock.
 
 In this README, `swe-agents <command>` means
 `npx --yes github:startmeupai/swe-agents <command>` from your repository, or
@@ -89,7 +127,10 @@ options.
 
 ## What the Installer Writes
 
-`--dry-run` prints the plan and writes nothing. Use `--packs python,docker`
+`init`, `install`, and `update` print the plan, then ask before writing:
+`--yes` applies without asking, and without a terminal nothing is written
+unless `--yes` is passed. `--dry-run` prints the plan and writes nothing. Use
+`--packs python,docker`
 instead of `--profile` for a custom combination. Required packs are added
 transitively, and the installer stops on a missing pack, a dependency cycle, a
 declared conflict, or a duplicate persona or skill name. The target receives:
@@ -114,9 +155,11 @@ AGENTS.md                         # core rules + one "## <Pack> rules" section p
 - **Local-edit protection.** `install` does not overwrite a file whose hash no
   longer matches the lock unless you pass `--force`. `update` merges such a
   file instead.
-- **No `CLAUDE.md`.** By default, Claude Code reads `AGENTS.md` only when no
-  `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` exists in the working
-  directory or any directory above it, so fold such a file's content into
+- **No `CLAUDE.md`.** The installer never writes one. By default, Claude Code
+  reads `AGENTS.md` only when no `CLAUDE.md`, `.claude/CLAUDE.md`, or
+  `CLAUDE.local.md` exists in the working directory or any directory above it.
+  If you keep a `CLAUDE.md`, add the line `@AGENTS.md` to it so Claude Code
+  imports the rules; the installer warns while none of these files imports
   `AGENTS.md`.
 - **No symlinks.** Skills are copied to both directories, so Windows works.
 - **Verify.** In Claude Code, `/memory` (or `/context`) shows `AGENTS.md` and
@@ -133,7 +176,8 @@ swe-agents update
 ```
 
 `update` reads the lock, fetches the same source repository at the locked ref
-or at `--ref <git-ref>`, and reinstalls the locked profile or pack list.
+or at `--ref <git-ref>`, shows the plan, and after you confirm, reinstalls the
+locked profile or pack list. Pass `--yes` to apply without asking.
 
 | File in the lock | Result |
 | --- | --- |
