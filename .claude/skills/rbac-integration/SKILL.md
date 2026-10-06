@@ -19,13 +19,15 @@ Use for roles, membership, invitations, administration, tenant scope, and access
 2. Define resource roles and prevent unintended privilege escalation.
 3. Identify and enforce the destination system's membership prerequisites.
 4. Implement the approved access matrix; do not assume administrator bypass or role elevation.
-5. Guard layouts, routes, actions, stores, and delayed apply paths.
+5. Guard every entry point the project has (routes, handlers, actions, views,
+   jobs), its stores, and delayed apply paths.
 6. Verify member filtering never falls back to cross-scope data.
 7. Test positive and negative paths through persistence and direct navigation.
 
 ## Deterministic Checks
 
-- Typecheck, focused authorization tests, store round trips, and role-mapping assertions.
+- Static and type checks where the language has them, focused authorization
+  tests, store round trips, and role-mapping assertions.
 
 ## Safety and Permission Boundaries
 

@@ -1,0 +1,5 @@
+{
+  "name": "reference",
+  "description": "Every pack; generates this repository's own runtime directories and exercises every pack in checks.",
+  "packs": ["typescript", "web-ui", "playwright", "cloudflare", "python", "docker", "supabase"]
+}

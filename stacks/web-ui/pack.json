@@ -1,0 +1,24 @@
+{
+  "name": "web-ui",
+  "kind": "framework",
+  "version": "0.1.0",
+  "description": "Accessible, token-driven, responsive web UI personas, skills, and rules for TypeScript component trees.",
+  "requires": ["typescript"],
+  "conflicts": [],
+  "detect": ["app/**/*.tsx", "components/**/*.tsx", "tailwind.config.*"],
+  "commands": {},
+  "agents": ["ui-agent", "ui-sm-agent"],
+  "skills": ["ui-replication", "ui-sm-verification", "ui-visual-verification"],
+  "routes": [
+    {
+      "outcome": "Build or compare UI",
+      "owner": "ui-agent",
+      "skills": ["ui-replication", "ui-visual-verification"]
+    },
+    {
+      "outcome": "Repair small-screen behavior",
+      "owner": "ui-sm-agent",
+      "skills": ["ui-sm-verification", "ui-visual-verification"]
+    }
+  ]
+}

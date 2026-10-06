@@ -1,0 +1,55 @@
+{
+  "name": "playwright",
+  "kind": "verification",
+  "version": "0.1.0",
+  "description": "Playwright browser verification: defect reproduction, durable specs, profile sweeps, plan gates, and redacted evidence bundles.",
+  "requires": ["typescript"],
+  "conflicts": [],
+  "detect": ["playwright.config.*", "playwright-tests/**", "e2e/**"],
+  "commands": {
+    "e2e": "pnpm exec playwright test",
+    "e2e_ui": "pnpm exec playwright test --ui",
+    "report": "pnpm exec playwright show-report"
+  },
+  "agents": [
+    "e2e-hardening-agent",
+    "plan-hv-agent",
+    "playwright-generator-agent",
+    "playwright-healer-agent",
+    "playwright-investigator-agent",
+    "test-and-prove-agent"
+  ],
+  "skills": ["e2e-hardening", "plan-hv-automation", "playwright-testing", "test-and-prove"],
+  "routes": [
+    {
+      "outcome": "Reproduce a browser defect",
+      "owner": "playwright-investigator-agent",
+      "skills": ["playwright-testing", "feature-implementation"]
+    },
+    {
+      "outcome": "Add durable browser coverage",
+      "owner": "playwright-generator-agent",
+      "skills": ["playwright-testing"]
+    },
+    {
+      "outcome": "Repair a failing browser spec",
+      "owner": "playwright-healer-agent",
+      "skills": ["playwright-testing"]
+    },
+    {
+      "outcome": "Sweep claims across profiles",
+      "owner": "e2e-hardening-agent",
+      "skills": ["e2e-hardening", "playwright-testing"]
+    },
+    {
+      "outcome": "Close observable plan gates",
+      "owner": "plan-hv-agent",
+      "skills": ["plan-hv-automation", "playwright-testing"]
+    },
+    {
+      "outcome": "Package browser evidence",
+      "owner": "test-and-prove-agent",
+      "skills": ["test-and-prove", "playwright-testing"]
+    }
+  ]
+}

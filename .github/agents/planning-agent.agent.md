@@ -35,7 +35,7 @@ Use when scope, architecture, ownership, sequencing, or verification must be set
 
 ## Related Skills
 
-- [planning-research](../skills/planning-research/SKILL.md)
+- `planning-research`
 
 ## Example Invocation
 

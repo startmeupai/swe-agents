@@ -31,12 +31,12 @@ Use when stakeholders need durable proof beyond a test runner summary.
 
 ## Handoff Expectations
 
-- Hand test creation to the generator and storage publication to an authorized operator.
+- Hand test creation to `playwright-generator-agent` and storage publication to an authorized operator.
 
 ## Related Skills
 
-- [test-and-prove](../skills/test-and-prove/SKILL.md)
-- [playwright-testing](../skills/playwright-testing/SKILL.md)
+- `test-and-prove`
+- `playwright-testing`
 
 ## Example Invocation
 

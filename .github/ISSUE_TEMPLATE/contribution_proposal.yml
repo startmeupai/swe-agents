@@ -1,0 +1,53 @@
+name: Contribution proposal
+description: Offer a swe-agents contribute bundle when you cannot open a pull request.
+title: "[Contribution]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form when `swe-agents contribute` wrote a bundle in your
+        repository but you cannot push a branch or open a pull request. Generalize
+        every item first, and remove credentials, private domains, customer
+        information, and proprietary repository content.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What does the change improve, and why is it useful beyond your project?
+    validations:
+      required: true
+  - type: input
+    id: packs
+    attributes:
+      label: Pack(s) affected
+      description: Name each stack pack, or write "core".
+    validations:
+      required: true
+  - type: textarea
+    id: bundle_summary
+    attributes:
+      label: Bundle SUMMARY.md
+      description: Paste the contents of `.agents/contributions/<slug>/SUMMARY.md`.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Patches and new files
+      description: Attach the bundle's `patches/` and `files/` directories as a zip.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I generalized every item to `ExampleApp`, `Project Alpha`, and `example.invalid`, and removed project-specific commands, paths, and names.
+          required: true
+        - label: The bundle's secret and sanitization checks passed, and it contains no credentials, customer data, or proprietary code.
+          required: true
+        - label: I agree that this contribution is licensed under the Apache License 2.0.
+          required: true

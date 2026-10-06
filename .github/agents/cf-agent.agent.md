@@ -35,8 +35,8 @@ Use for Cloudflare Workers, edge routes, OpenNext-style build splits, and provid
 
 ## Related Skills
 
-- [cloudflare-ops](../skills/cloudflare-ops/SKILL.md)
-- [github-actions](../skills/github-actions/SKILL.md)
+- `cloudflare-ops`
+- `github-actions`
 
 ## Example Invocation
 

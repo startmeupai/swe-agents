@@ -31,11 +31,11 @@ Use for new journey coverage, scenario matrices, and durable regression specific
 
 ## Handoff Expectations
 
-- Send application defects to `playwright-investigator-agent` and flaky existing specs to the healer.
+- Send application defects to `playwright-investigator-agent` and flaky existing specs to `playwright-healer-agent`.
 
 ## Related Skills
 
-- [playwright-testing](../skills/playwright-testing/SKILL.md)
+- `playwright-testing`
 
 ## Example Invocation
 

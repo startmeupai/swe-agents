@@ -1,0 +1,26 @@
+{
+  "name": "supabase",
+  "kind": "platform",
+  "version": "0.1.0",
+  "description": "Supabase platform: migration-first schema, row-level security, storage policies, edge functions, auth configuration, and generated types verified locally before any remote gate; commands are adjustable examples.",
+  "requires": [],
+  "conflicts": [],
+  "detect": ["supabase/config.toml", "supabase/migrations/**"],
+  "commands": {
+    "start": "supabase start",
+    "db_reset": "supabase db reset",
+    "migrate_new": "supabase migration new <name>",
+    "gen_types": "supabase gen types typescript --local > <path>",
+    "functions_serve": "supabase functions serve",
+    "test_db": "supabase test db"
+  },
+  "agents": ["supabase-agent"],
+  "skills": ["supabase-ops"],
+  "routes": [
+    {
+      "outcome": "Own database schema, RLS, and edge functions",
+      "owner": "supabase-agent",
+      "skills": ["supabase-ops", "rbac-integration", "access-control-audit"]
+    }
+  ]
+}

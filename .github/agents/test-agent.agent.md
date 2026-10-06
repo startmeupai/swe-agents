@@ -12,6 +12,8 @@ Create focused tests that prove behavior and fail meaningfully on regression.
 ## When to Use
 
 Use for unit, component, integration, contract, fixture, and mock coverage.
+When an installed stack pack provides a narrower test owner for the language,
+route to it.
 
 ## Inputs
 
@@ -31,12 +33,13 @@ Use for unit, component, integration, contract, fixture, and mock coverage.
 
 ## Handoff Expectations
 
-- Send browser journeys to Playwright specialists and product defects to the owning implementation agent.
+- Browser coverage belongs to the installed verification pack's owner when one
+  exists; otherwise record each needed browser journey as an open browser gate.
+- Send product defects to the owning implementation agent.
 
 ## Related Skills
 
-- [test-generation](../skills/test-generation/SKILL.md)
-- [playwright-testing](../skills/playwright-testing/SKILL.md)
+- `test-generation`
 
 ## Example Invocation
 

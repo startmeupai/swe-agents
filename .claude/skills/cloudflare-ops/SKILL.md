@@ -20,12 +20,12 @@ Use for worker configs, route ownership, bindings, scheduled handlers, bundle li
 3. Declare bindings by name without embedding values.
 4. Validate route ownership for overlap and missing coverage.
 5. If manifests are generated, rebuild them through the project's generator.
-6. Measure bundle size on a CI-equivalent build.
+6. Measure bundle size on a CI-equivalent build from the pack's build command (`npx wrangler deploy --dry-run --outdir .wrangler/dist` by default).
 7. Separate local validation from provider preview, deployment, and smoke gates.
 
 ## Deterministic Checks
 
-- Config parse, route-map consistency, manifest freshness, bundle gate, and local smoke command.
+- Config parse through the pack's validate command (`npx wrangler deploy --dry-run` by default), route-map consistency, manifest freshness, bundle gate, and local smoke command.
 
 ## Safety and Permission Boundaries
 

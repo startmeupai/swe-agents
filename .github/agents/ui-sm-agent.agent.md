@@ -31,12 +31,13 @@ Use when an existing route or flow fails on phones, narrow containers, or touch 
 
 ## Handoff Expectations
 
-- Escalate broad visual redesign to `ui-agent` and committed coverage to `playwright-generator-agent`.
+- Escalate broad visual redesign to `ui-agent`.
+- Send committed browser coverage to the owner from the installed verification pack, such as `playwright-generator-agent` from the `playwright` pack.
 
 ## Related Skills
 
-- [ui-sm-verification](../skills/ui-sm-verification/SKILL.md)
-- [ui-visual-verification](../skills/ui-visual-verification/SKILL.md)
+- `ui-sm-verification`
+- `ui-visual-verification`
 
 ## Example Invocation
 
