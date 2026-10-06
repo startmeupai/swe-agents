@@ -41,9 +41,10 @@ Use when asked to execute, continue, update, or finish an approved plan.
 
 ## Deterministic Checks
 
-- `pnpm check:plans` exits 0 at every stage boundary: statuses are known,
-  Complete stages have no open box, and every open box in a Blocked or In
-  review stage carries a gate tag.
+- The project's plan checker (for example `pnpm check:plans`) exits 0 at every
+  stage boundary: statuses are known, Complete stages have no open box, and
+  every open box in a Blocked or In review stage carries a gate tag. Without a
+  checker, verify the same conditions by reading the plan.
 
 ## Safety and Permission Boundaries
 
@@ -60,6 +61,5 @@ Use when asked to execute, continue, update, or finish an approved plan.
 ## Example
 
 `Execute the approved Project Alpha plan and write back after every stage.`
-See the [stage-end writeback](../../../examples/plans/stage-end-writeback.md)
-and [review-gate writeback](../../../examples/plans/review-gate-writeback.md)
-examples.
+See `examples/plans/stage-end-writeback.md` and
+`examples/plans/review-gate-writeback.md` in the reference repository.

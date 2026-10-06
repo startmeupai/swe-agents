@@ -19,6 +19,13 @@ Every completion report names which layers ran, the command or observation,
 the result, and what remained unverified. Evidence from another environment or
 an older run is labeled as such.
 
+Installed stack packs supply the commands for the formatting, type, test, and
+browser layers. For example, the `typescript` pack declares `pnpm lint`,
+`pnpm typecheck`, and `pnpm test`; the `python` pack declares `ruff check .`,
+`mypy .`, and `pytest -q`; and the `playwright` pack owns browser journeys.
+Core personas run the commands the installed packs declare. A layer that no
+installed pack covers is reported as not run, never as passed.
+
 ## Finding Severity
 
 Research, review, and audit reports rank findings on one shared scale.

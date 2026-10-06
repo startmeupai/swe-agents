@@ -35,8 +35,8 @@ Use for a reported browser bug, broken authenticated flow, or unexplained client
 
 ## Related Skills
 
-- [playwright-testing](../skills/playwright-testing/SKILL.md)
-- [feature-implementation](../skills/feature-implementation/SKILL.md)
+- `playwright-testing`
+- `feature-implementation`
 
 ## Example Invocation
 

@@ -19,14 +19,15 @@ Use for plan critique, simplification, readiness assessment, or an authorized pl
 2. Cross-reference every new contract, component, store, and workflow.
 3. Find security gaps, duplication, missing ownership, weak evidence, and scope creep.
 4. Rank findings on the
-   [finding severity](../../../docs/verification-model.md#finding-severity) scale.
+   finding severity scale from the core rules.
 5. In update mode, correct authorized findings without inflating scope.
 6. Re-audit and issue a readiness verdict.
 
 ## Deterministic Checks
 
-- Validate paths and zero unresolved Critical/High findings; `pnpm check:plans`
-  validates checkbox syntax, stage fields, and assigned personas.
+- Validate paths and zero unresolved Critical/High findings; run the project's
+  plan checker when it has one (for example `pnpm check:plans`) to validate
+  checkbox syntax, stage fields, and assigned personas.
 
 ## Safety and Permission Boundaries
 

@@ -28,8 +28,7 @@ choose planning mode only when the caller explicitly requests a plan.
    feature flags; record each missing one as a finding or a plan task.
 6. Record evidence and risks, including security and deployment effects.
 7. In research mode, rank findings on the
-   [finding severity](../../../docs/verification-model.md#finding-severity)
-   scale and report a summary, ranked findings, and limitations.
+   finding severity scale from the core rules and report a summary, ranked findings, and limitations.
 8. In planning mode only, write stages in the format below with atomic tasks,
    dependencies, and separate verification gates.
 
@@ -55,8 +54,9 @@ choose planning mode only when the caller explicitly requests a plan.
 
 ## Deterministic Checks
 
-- Confirm every referenced file exists. In planning mode, `pnpm check:plans`
-  validates checkbox syntax, stage fields, and assigned personas.
+- Confirm every referenced file exists. In planning mode, run the project's
+  plan checker when it has one (for example `pnpm check:plans`) to validate
+  checkbox syntax, stage fields, and assigned personas.
 
 ## Safety and Permission Boundaries
 
@@ -76,4 +76,4 @@ choose planning mode only when the caller explicitly requests a plan.
 ## Example
 
 `Plan Project Alpha team settings after researching existing RBAC and UI patterns.`
-See the [staged plan example](../../../examples/plans/staged-implementation-plan.md).
+See `examples/plans/staged-implementation-plan.md` in the reference repository.

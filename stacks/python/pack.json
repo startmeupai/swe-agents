@@ -1,0 +1,30 @@
+{
+  "name": "python",
+  "kind": "language",
+  "version": "0.1.0",
+  "description": "Python language rules, feature and test personas, and skills built on uv, ruff, mypy, and pytest.",
+  "requires": [],
+  "conflicts": [],
+  "detect": ["pyproject.toml", "**/*.py"],
+  "commands": {
+    "install": "uv sync --frozen",
+    "lint": "ruff check .",
+    "format": "ruff format --check .",
+    "typecheck": "mypy .",
+    "test": "pytest -q"
+  },
+  "agents": ["python-feature-agent", "python-test-agent"],
+  "skills": ["python-feature-implementation", "python-testing"],
+  "routes": [
+    {
+      "outcome": "Build Python behavior",
+      "owner": "python-feature-agent",
+      "skills": ["python-feature-implementation", "test-generation"]
+    },
+    {
+      "outcome": "Create Python tests",
+      "owner": "python-test-agent",
+      "skills": ["python-testing", "test-generation"]
+    }
+  ]
+}

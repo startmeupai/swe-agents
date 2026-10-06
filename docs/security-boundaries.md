@@ -23,10 +23,20 @@ regex-only filtering.
 - Test both allowed and denied RBAC behavior with the exact intended profiles.
 - Require explicit authority for destructive, external, production, or
   publication actions.
-- Declare a `tools` list without `edit` on every read-only persona. Codex
+- Declare a `tools` allowlist without `Edit`, `Write`, or `NotebookEdit` on
+  every read-only persona, and say "Read-only" in its description. Codex
   enforces it with a read-only sandbox. Claude Code and Copilot remove their
   edit tools, but a shell command can still write, so the persona's boundaries
   remain the control for shell side effects.
+
+## Packs and Profiles
+
+Installing a stack pack or profile adds personas, skills, rules, and commands;
+it grants no credentials, provider access, or deployment authority. Platform
+packs such as `cloudflare`, `docker`, and `supabase` still require explicit
+authority for production, destructive, external, or secret-changing actions.
+Review a pack's rules and commands before installing it, and review the
+installer's dry run before it writes into a repository.
 
 Security audits report evidence and limitations; they do not silently change
 authorization policy.

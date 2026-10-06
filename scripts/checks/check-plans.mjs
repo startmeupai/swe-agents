@@ -1,6 +1,5 @@
-import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { finish, label, read, root, walk } from './lib.mjs'
+import { allEntries, finish, label, read, root, walk } from './lib.mjs'
 
 // Adopting repositories point this at their own plan directory.
 const planDirectory = join(root, 'examples/plans')
@@ -11,8 +10,10 @@ const gateTag = /^- \[ \] \*\*(?:(?:Browser|Provider|Deployment|Operations|Legal
 const failures = []
 let stageCount = 0
 
+// Specialists are canonical personas from core or any stack pack.
+const personas = new Set(allEntries().agents.map(entry => entry.name))
 function personaExists(name) {
-  return existsSync(join(root, '.github/agents', `${name}.agent.md`))
+  return personas.has(name)
 }
 
 for (const file of files) {

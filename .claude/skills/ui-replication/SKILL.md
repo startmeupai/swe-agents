@@ -24,7 +24,8 @@ Use when screenshots, mockups, or an existing interface define the target appear
 
 ## Deterministic Checks
 
-- Typecheck, lint, accessibility assertions, token scans, and visual specs where available.
+- The `typescript` pack's typecheck (`pnpm typecheck`) and lint (`pnpm lint`) commands.
+- Accessibility assertions, token scans, and visual specs where available.
 
 ## Safety and Permission Boundaries
 

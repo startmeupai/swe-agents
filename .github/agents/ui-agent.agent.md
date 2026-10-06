@@ -31,12 +31,13 @@ Use for screenshot replication, themed surfaces, visual polish, and layout imple
 
 ## Handoff Expectations
 
-- Route narrow mobile defects to `ui-sm-agent` and durable browser coverage to Playwright owners.
+- Route narrow mobile defects to `ui-sm-agent` and data, service, or API behavior to `typescript-feature-agent`.
+- Route durable browser coverage to the owner from the installed verification pack, such as `playwright-generator-agent` from the `playwright` pack.
 
 ## Related Skills
 
-- [ui-replication](../skills/ui-replication/SKILL.md)
-- [ui-visual-verification](../skills/ui-visual-verification/SKILL.md)
+- `ui-replication`
+- `ui-visual-verification`
 
 ## Example Invocation
 

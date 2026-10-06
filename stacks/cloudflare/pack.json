@@ -1,0 +1,22 @@
+{
+  "name": "cloudflare",
+  "kind": "platform",
+  "version": "0.1.0",
+  "description": "Cloudflare Workers platform: route ownership, bindings, edge builds, bundle limits, and deployment gates; commands are adjustable examples.",
+  "requires": [],
+  "conflicts": [],
+  "detect": ["wrangler.toml", "wrangler.jsonc", "open-next.config.*"],
+  "commands": {
+    "validate": "npx wrangler deploy --dry-run",
+    "build": "npx wrangler deploy --dry-run --outdir .wrangler/dist"
+  },
+  "agents": ["cf-agent"],
+  "skills": ["cloudflare-ops"],
+  "routes": [
+    {
+      "outcome": "Own edge-worker infrastructure",
+      "owner": "cf-agent",
+      "skills": ["cloudflare-ops", "github-actions"]
+    }
+  ]
+}

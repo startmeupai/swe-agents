@@ -1,0 +1,5 @@
+{
+  "name": "nextjs-supabase",
+  "description": "TypeScript web application with browser verification, backed by Supabase.",
+  "packs": ["typescript", "web-ui", "playwright", "supabase"]
+}

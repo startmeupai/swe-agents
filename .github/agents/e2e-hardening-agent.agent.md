@@ -35,8 +35,8 @@ Use before release for a proactive feature or module sweep, not for one reported
 
 ## Related Skills
 
-- [e2e-hardening](../skills/e2e-hardening/SKILL.md)
-- [playwright-testing](../skills/playwright-testing/SKILL.md)
+- `e2e-hardening`
+- `playwright-testing`
 
 ## Example Invocation
 

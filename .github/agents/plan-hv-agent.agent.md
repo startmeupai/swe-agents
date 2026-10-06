@@ -35,8 +35,8 @@ Use when an implemented plan has open runtime or human-verification gates.
 
 ## Related Skills
 
-- [plan-hv-automation](../skills/plan-hv-automation/SKILL.md)
-- [playwright-testing](../skills/playwright-testing/SKILL.md)
+- `plan-hv-automation`
+- `playwright-testing`
 
 ## Example Invocation
 

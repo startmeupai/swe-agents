@@ -35,9 +35,9 @@ Use after delivery, at stage gates, or when plan status may have drifted from re
 
 ## Related Skills
 
-- [plan-review](../skills/plan-review/SKILL.md)
-- [plan-operations](../skills/plan-operations/SKILL.md)
-- [planning-research](../skills/planning-research/SKILL.md)
+- `plan-review`
+- `plan-operations`
+- `planning-research`
 
 ## Example Invocation
 

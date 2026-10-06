@@ -51,6 +51,25 @@ included. Sanitization scans are heuristic and still require human review.
 The first tagged release must still pass the same hosted checks from its release
 commit.
 
+## Stack-Pack Restructure — Integrator Review
+
+These items cover the move from `.github/` canonical files to `core/`,
+`stacks/`, and `profiles/`. Only the integrator of that change can complete
+them, with named evidence.
+
+- [ ] `.claude/`, `.agents/`, `.codex/`, and `.github/agents/` were regenerated
+  from `core/` and `stacks/` with `pnpm sync:setup`, and `pnpm check:setup`
+  reports no drift.
+- [ ] `pnpm check:stacks` and `pnpm check:all` pass on the restructure commit.
+- [ ] Every profile in `profiles/` installs into an empty target in CI on Linux
+  and Windows.
+- [ ] `SOURCE_MAP.md` covers `core/`, `stacks/`, and `profiles/`, with no stale
+  rows for the removed `CLAUDE.md`, `.github/instructions/`, and
+  `.github/skills/`.
+- [ ] No `CLAUDE.md` or `CLAUDE.local.md` remains, and Claude Code loads
+  `AGENTS.md` in this repository and in a seeded target.
+- [ ] Copilot and Cursor list each installed skill once in a seeded target.
+
 ## Runtime Smoke Checks — Still Required
 
 Use this directory as a standalone project. Record client and version,

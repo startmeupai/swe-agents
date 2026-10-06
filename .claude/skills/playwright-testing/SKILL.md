@@ -20,11 +20,12 @@ Use for durable browser specifications, journey debugging, or existing-spec repa
 3. Prefer role, label, text, and stable test-id selectors in that order.
 4. Wait for observable application state, not elapsed time.
 5. Assert the critical behavior and relevant denial paths.
-6. Restore state, run the focused spec, and retain traces for failures.
+6. Restore state, run the focused spec with the pack's e2e command (`pnpm exec playwright test`), and retain traces for failures.
 
 ## Deterministic Checks
 
 - Focused browser run, zero unexpected skips, cleanup result, and repeat run when flake risk exists.
+- Failure traces reviewed through the pack's report command (`pnpm exec playwright show-report`).
 
 ## Safety and Permission Boundaries
 

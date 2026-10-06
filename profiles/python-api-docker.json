@@ -1,0 +1,5 @@
+{
+  "name": "python-api-docker",
+  "description": "Python service or API built and run in Docker containers.",
+  "packs": ["python", "docker"]
+}

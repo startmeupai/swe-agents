@@ -35,7 +35,7 @@ Use for workflow triggers, jobs, permissions, caching, artifacts, and CI failure
 
 ## Related Skills
 
-- [github-actions](../skills/github-actions/SKILL.md)
+- `github-actions`
 
 ## Example Invocation
 

@@ -23,9 +23,10 @@ body:
     attributes:
       label: Primary surface
       options:
-        - Instructions
-        - Agent persona
+        - Core rules or persona
         - Skill
+        - Stack pack
+        - Installer or profile
         - Deterministic check
         - Example or documentation
         - Runtime compatibility

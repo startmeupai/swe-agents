@@ -1,0 +1,29 @@
+{
+  "name": "typescript",
+  "kind": "language",
+  "version": "0.1.0",
+  "description": "Strict TypeScript rules, feature and test personas, and skills run with pnpm.",
+  "requires": [],
+  "conflicts": [],
+  "detect": ["tsconfig.json", "**/*.ts", "**/*.tsx"],
+  "commands": {
+    "install": "pnpm install --frozen-lockfile",
+    "lint": "pnpm lint",
+    "typecheck": "pnpm typecheck",
+    "test": "pnpm test"
+  },
+  "agents": ["typescript-feature-agent", "typescript-test-agent"],
+  "skills": ["typescript-feature-implementation", "typescript-testing"],
+  "routes": [
+    {
+      "outcome": "Build TypeScript behavior",
+      "owner": "typescript-feature-agent",
+      "skills": ["typescript-feature-implementation", "typescript-testing", "feature-implementation", "test-generation"]
+    },
+    {
+      "outcome": "Create TypeScript tests",
+      "owner": "typescript-test-agent",
+      "skills": ["typescript-testing", "test-generation"]
+    }
+  ]
+}

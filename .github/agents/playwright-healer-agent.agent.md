@@ -35,7 +35,7 @@ Use for flaky, brittle, outdated, or consistently failing existing Playwright sp
 
 ## Related Skills
 
-- [playwright-testing](../skills/playwright-testing/SKILL.md)
+- `playwright-testing`
 
 ## Example Invocation
 

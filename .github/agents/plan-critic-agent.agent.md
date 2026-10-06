@@ -35,7 +35,7 @@ Use after plan creation or when a plan needs a readiness verdict.
 
 ## Related Skills
 
-- [plan-review](../skills/plan-review/SKILL.md)
+- `plan-review`
 
 ## Example Invocation
 

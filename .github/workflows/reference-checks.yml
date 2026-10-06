@@ -40,3 +40,27 @@ jobs:
 
       - name: Run reference checks
         run: pnpm check:all
+
+      - name: Dry-run every installation profile
+        shell: bash
+        env:
+          STACKS_TMP: ${{ runner.temp }}
+        run: |
+          for profile in profiles/*.json; do
+            name="$(basename "$profile" .json)"
+            target="$STACKS_TMP/stacks-dry-run/$name"
+            mkdir -p "$target"
+            node scripts/stacks/install.mjs --target "$target" --profile "$name" --dry-run
+          done
+
+      - name: Install a profile twice to prove idempotence
+        shell: bash
+        env:
+          STACKS_TMP: ${{ runner.temp }}
+        run: |
+          target="$STACKS_TMP/stacks-install"
+          mkdir -p "$target"
+          node scripts/stacks/install.mjs --target "$target" --profile python-api-docker
+          test -f "$target/.agents/stacks.lock.json"
+          node scripts/stacks/install.mjs --target "$target" --profile python-api-docker | tee "$STACKS_TMP/stacks-reinstall.log"
+          grep -qx 'Result: no changes' "$STACKS_TMP/stacks-reinstall.log"

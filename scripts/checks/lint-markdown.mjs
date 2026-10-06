@@ -15,7 +15,7 @@ for (const file of markdownFiles()) {
     const line = lines[index]
     const number = index + 1
     if (/\s+$/.test(line)) failures.push(`${label(file)}:${number}: trailing whitespace`)
-    if (line.startsWith('# ')) h1 += 1
+    if (!inFence && line.startsWith('# ')) h1 += 1
     if (line.startsWith('```')) {
       if (!inFence) {
         if (!/^```[A-Za-z0-9_-]+\s*$/.test(line)) failures.push(`${label(file)}:${number}: opening fence needs a language`)

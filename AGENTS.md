@@ -1,34 +1,59 @@
 # Agent Entry Point
 
-Read [`.github/copilot-instructions.md`](.github/copilot-instructions.md) first,
-then load the narrowest matching instruction, persona, and skill.
+These rules are for maintainers, contributors, and agents changing this
+reference itself. Every supported client starts here (Copilot through
+`.github/copilot-instructions.md`). There is no `CLAUDE.md`; Claude Code reads
+`AGENTS.md` when no `CLAUDE.md` exists.
 
-## Operating Rules
+## Canonical and Generated Files
 
-- Use `pnpm` for project commands.
-- Treat the checkout and Git index as shared.
-- Research before broad changes and reuse before creating abstractions.
-- Agents own outcomes; skills own procedures; instructions own constraints.
-- Keep authentication, authorization, tenant scope, and apply-time checks explicit.
-- Record proof by layer; never convert an unrun check into a pass.
-- Do not perform destructive, production, publishing, or external write actions
-  without explicit authority.
+- Canonical sources: [`core/`](core/) holds the stack-neutral rules fragment,
+  personas, and skills; [`stacks/`](stacks/) holds one pack per language,
+  framework, platform, or verification stack, each with a manifest, rules
+  fragment, and optional personas and skills.
+- Generated copies of the `reference` profile (core plus every pack):
+  `.claude/agents/`, `.claude/skills/`, `.agents/skills/`, `.codex/agents/`,
+  and `.github/agents/`. Never edit them directly.
+- After any canonical change, run `pnpm sync:setup`, then `pnpm check:all`,
+  and commit the canonical and regenerated files together.
+- Use plain copies; symlinks are not allowed.
+- Core must stay stack-neutral and never name a pack persona or skill. New pack
+  personas and skills start with `<pack>-`, and every name is unique across
+  core and all packs.
+
+## Working Rules
+
+- Read and follow [`core/AGENTS.md`](core/AGENTS.md); it applies here too. Read
+  the `AGENTS.md` of every pack you change; it is not loaded automatically.
+- Use `pnpm` for this repository's commands.
+- Read the relevant persona and skill before acting. Personas own outcomes,
+  skills own procedures, and rules fragments own constraints.
+- Keep examples fictional: `ExampleApp`, `Project Alpha`, `example.invalid`.
+- Store plans under `examples/plans/`, reports under `examples/reports/`,
+  handoffs under `examples/handoffs/`, and browser manifests under
+  `examples/browser-evidence/`.
+- Update [`SOURCE_MAP.md`](SOURCE_MAP.md) for every added, moved, or removed
+  tracked file.
+- Do not treat `@agent-name` examples as universal invocation syntax.
+
+## Evidence and Authority
+
+- Never claim automated, browser, provider, deployed, or human evidence that
+  was not actually collected, and never mark a gate complete without its named
+  evidence. See the [verification model](docs/verification-model.md).
+- Record proof by layer and keep automated, browser, provider, deployed, and
+  human proof distinct; an unrun check is never a pass.
+- Production, destructive, external write, publication, and credential changes
+  require explicit human authority.
 
 ## Routing
 
-The persona catalog is [`.github/AGENTS.md`](.github/AGENTS.md), and detailed
-routing guidance is in [`docs/agent-routing.md`](docs/agent-routing.md).
-Path-scoped rules live in [`.github/instructions/`](.github/instructions/).
-
-## Codex Setup
-
-Native custom-agent definitions live in `.codex/agents/`; discoverable skill
-copies live in `.agents/skills/`. Their canonical sources live under `.github/`.
-After changing a canonical persona or skill, run `pnpm sync:setup` and
-`pnpm check:setup`. Read applicable `.github/instructions/` files explicitly.
-Do not treat `@agent-name` examples as universal invocation syntax.
+- Persona catalog: [`.github/AGENTS.md`](.github/AGENTS.md).
+- Outcome routing: [`docs/agent-routing.md`](docs/agent-routing.md).
+- Packs, profiles, and installing into another repository:
+  [`docs/stack-packs.md`](docs/stack-packs.md).
 
 ## Verification
 
-Run `pnpm check:all` after agent-system changes. Run only additional checks that
-exist in the adopting repository, and report each result separately.
+Run `pnpm check:all` after agent-system changes and report each result
+separately; do not report checks that did not run.

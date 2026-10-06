@@ -1,0 +1,5 @@
+{
+  "name": "nextjs-cloudflare",
+  "description": "TypeScript web application with browser verification, deployed to Cloudflare Workers.",
+  "packs": ["typescript", "web-ui", "playwright", "cloudflare"]
+}
