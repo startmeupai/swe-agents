@@ -16,9 +16,13 @@ separate concerns.
 | `test` | Integration branch; every contribution pull request targets it |
 | `main` | Default branch; receives `test` by promotion and carries the release tags |
 
-Maintainers promote `test` to `main` with a pull request for each release. The
+Maintainers promote `test` to `main` with a pull request for each release.
+Contribution pull requests are squash-merged into `test`; the promotion pull
+request is merged into `main` with a merge commit, so `main` keeps the commits
+of `test` and the two branches never diverge. The
 [reference checks](../.github/workflows/reference-checks.yml) run on every pull
 request and on every push to `main` and `test`, on Linux and Windows.
+Dependabot opens monthly GitHub Actions updates against `test`.
 `swe-agents update` follows the lock's `source.ref`, `main` by default, so
 adopters receive only promoted changes unless they pass `--ref test`.
 

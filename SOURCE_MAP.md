@@ -30,6 +30,7 @@ snapshot. No source file was copied verbatim.
 | `.github/AGENTS.md` | `.github/AGENTS.md` | Condensed | Only selected personas retained |
 | `.github/copilot-instructions.md` | `.github/copilot-instructions.md` | Rewritten generically | Branch, module, and product rules removed |
 | `.github/workflows/reference-checks.yml` | Program CI requirement | Updated for the `test` integration branch | Read-only PR checks run once; pushes to `main` and `test` are checked without secrets or deployment |
+| `.github/dependabot.yml` | GitHub Dependabot guidance | Newly created for GitHub Actions only | Monthly grouped updates target `test`; no registries or credentials |
 | `docs/architecture.md` | Workshop standards, agent catalogs | Rewritten generically | Product architecture removed |
 | `docs/agent-routing.md` | Workshop standards, agent catalog | Condensed | Only selected roles retained |
 | `docs/plan-lifecycle.md` | Plan review, operations, and HV skills | Combined from several sources | Repository lifecycle paths generalized |
