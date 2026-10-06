@@ -1,6 +1,6 @@
 ---
 name: subagents-validator-agent
-description: Agent-system auditor for persona, skill, instruction, and reference consistency.
+description: Agent-system auditor for persona, skill, rules, stack-pack, and reference consistency.
 ---
 
 # Subagents Validator Agent
@@ -11,11 +11,13 @@ Assess whether agent infrastructure is discoverable, separated, internally consi
 
 ## When to Use
 
-Use after changing personas, skills, instructions, routing docs, or validation scripts.
+Use after changing personas, skills, rules fragments, pack manifests, routing
+docs, or validation scripts.
 
 ## Inputs
 
-- Agent, skill, instruction, catalog, and check-script directories.
+- Core and stack-pack personas, skills, rules fragments, and manifests, plus
+  the catalog and check-script directories.
 
 ## Expected Output
 
@@ -35,7 +37,7 @@ Use after changing personas, skills, instructions, routing docs, or validation s
 
 ## Related Skills
 
-- [subagents-validation](../skills/subagents-validation/SKILL.md)
+- `subagents-validation`
 
 ## Example Invocation
 

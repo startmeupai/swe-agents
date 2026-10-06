@@ -1,176 +1,313 @@
-# Agentic Engineering Reference
+# SWE Agents
 
-This local, sanitized project demonstrates how to organize AI-assisted software
-engineering around durable instructions, specialized ownership, reusable
-workflows, deterministic checks, evidence, and explicit authority boundaries.
-It is a teaching reference, not an application starter or a copy of any product.
+[![Reference checks](https://github.com/startmeupai/swe-agents/actions/workflows/reference-checks.yml/badge.svg)](https://github.com/startmeupai/swe-agents/actions/workflows/reference-checks.yml)
+[![License](https://img.shields.io/github/license/startmeupai/swe-agents)](LICENSE)
 
-> **Publication hold:** The owner must select an open-source license and complete
-> the human review checklist before publishing this project.
+A portable, stack-agnostic **seed** for agentic engineering setups in Codex,
+Claude Code, and GitHub Copilot, with Cursor-compatible surfaces through
+`.agents/skills` and `.claude/agents`. Copy a stack-neutral core plus the
+**stack packs** that match your project (TypeScript, Python, Web UI,
+Playwright, Cloudflare, Docker, Supabase) into a repository you already have.
 
-The repository is suitable for private staging and review. It is not a public
-release, a completed curriculum, or a deployable application.
+SWE Agents separates durable rules, specialist ownership, reusable skills,
+deterministic checks, and evidence, without importing product code,
+credentials, provider accounts, or deployable infrastructure.
 
-## Purpose and Non-Goals
+This is a teaching reference, not an application starter or a finished software
+product. Study it, then use it as a seed: install the core and your packs, and
+adapt what they write to your repository's own conventions.
 
-The project explains a research-to-production operating model that keeps
-implementation speed separate from proof. It includes generic patterns for
-planning, delivery, browser verification, RBAC, security, CI, and infrastructure.
+## How It Works
 
-It intentionally contains no application code, credentials, production
-configuration, customer data, private domains, provider accounts, or deployable
-cloud resources. The examples are fictional and use `ExampleApp`, `Project
-Alpha`, and `example.invalid`.
-
-## System Layers
-
-| Layer | Question | Location |
-| --- | --- | --- |
-| Instructions | What durable constraints apply? | [`AGENTS.md`](AGENTS.md), [`.github/instructions/`](.github/instructions/) |
-| Agents | Who owns the work? | [`.github/agents/`](.github/agents/) |
-| Skills | How does the workflow run? | [`.github/skills/`](.github/skills/) |
-| Tools | What can inspect or operate systems? | Runtime-specific and intentionally not configured here |
-| Scripts | What can be checked deterministically? | [`scripts/checks/`](scripts/checks/) |
-| Plans and reports | Where are decisions and evidence preserved? | [`examples/`](examples/) |
-
-Agents describe ownership and boundaries. Skills contain bounded procedures.
-Instructions state stable rules. Tools act on systems. Scripts return repeatable
-pass/fail results. Plans and reports preserve state beyond a chat session.
-
-## Codex, Claude Code, and GitHub Copilot Setup
-
-Open this directory as its own project so the enclosing checkout's instructions
-and configuration are outside the reference project root.
-
-| Tool | Instructions | Native personas | Discoverable skills |
+| Layer | Location | Contains | Installed |
 | --- | --- | --- | --- |
-| Codex | `AGENTS.md` | `.codex/agents/*.toml` | `.agents/skills/*/SKILL.md` |
-| Claude Code | `CLAUDE.md` | `.claude/agents/*.md` | `.claude/skills/*/SKILL.md` |
-| GitHub Copilot | `.github/copilot-instructions.md` | `.github/agents/*.agent.md` | `.github/skills/*/SKILL.md` |
+| Core | `core/` | Process personas (research, planning, review, operations, audit, feature, refactor, RBAC, test, CI, security, validation, upstream sync), their skills, and stack-neutral rules | Always |
+| Stack pack | `stacks/<pack>/` | Language, framework, platform, or verification personas, skills, rules, and commands | When selected |
+| Profile | `profiles/<name>.json` | A named combination of packs | Selects packs |
+| CLI | `scripts/stacks/cli.mjs` (`swe-agents`) | Detects packs, installs core and packs into each client's discovery paths, merges upstream updates, and bundles local improvements for upstream | When you run it |
 
-The canonical personas and skills live under `.github/`. Run `pnpm sync:setup`
-after editing them; it regenerates standalone runtime copies without symlinks.
-Run `pnpm check:setup` to detect missing or stale generated files. `pnpm check:all`
-includes this check. No account, model, MCP server, credential, deployment target,
-or product code is bundled.
+The core never names a pack. Core personas use the commands that the installed
+packs declare, so the core works on its own and each pack adds to it.
 
-Persona examples such as `@research-agent` express routing intent, not a command
-syntax shared by every tool. In Codex, ask it to delegate to the named custom
-agent; in Claude Code, use `/agents` or ask for the named subagent; in Copilot,
-select the custom agent in the agent picker. Availability depends on the client.
-For Codex and Claude, explicitly read the relevant `.github/instructions/` files.
-Static parity checks do not prove that a tool loaded or invoked an agent; record
-those smoke checks separately in the publication checklist.
+## Quick Start
 
-## Recommended Lifecycle
+### Start From Any Repository
 
-1. A human states intent, scope, authority, and acceptance criteria.
-2. `research-agent` establishes codebase facts with evidence.
-3. `planning-agent` produces one staged plan with specialist ownership.
-4. `plan-critic-agent` removes blocking design defects before wide writes.
-5. `plan-operations-agent` coordinates continuous execution and stage writeback.
-6. Specialists implement only the workstreams they own.
-7. Deterministic checks prove static, test, policy, and build claims.
-8. Independent audit and browser workflows verify plan and runtime behavior.
-9. Provider, deployment, human, and production gates remain distinct.
-10. Sanitized operational evidence informs the next iteration.
-
-See [agent routing](docs/agent-routing.md), [plan lifecycle](docs/plan-lifecycle.md),
-and the [verification model](docs/verification-model.md).
-
-## Conditional Specialist Routing
-
-Use only the specialists required by the task. A browser defect goes to the
-investigator, broad browser coverage to the generator, a failing specification
-to the healer, RBAC to the RBAC owner, and infrastructure to its infrastructure
-owner. Do not force every change through an identical agent chain.
-
-## Shared-Checkout Write Safety
-
-Assume other people or agents may share the checkout and Git index. Assign
-disjoint write ownership, inspect existing changes, edit only authorized files,
-and never revert, stash, stage, commit, or publish another worker's changes.
-Read-only research can run in parallel; overlapping contract changes should be
-serialized.
-
-## Deterministic Verification
-
-Use the exact Node.js version in [`.nvmrc`](.nvmrc). The package pins pnpm and
-commits its lockfile; every check itself uses only Node.js standard-library APIs.
+Run this from the root of the repository you want to equip. It needs Node.js
+22 and Git, and no clone or global install.
 
 ```bash
+npx --yes github:startmeupai/swe-agents init
+```
+
+`init` resolves a source checkout, then:
+
+1. **Detects** which packs fit by matching each pack's `detect` patterns
+   against your files.
+2. **Suggests** a selection: each pack, its kind, the files that matched, and
+   the required packs it pulls in.
+3. **Confirms** with a y/N prompt. `--yes` accepts without prompting; without
+   a terminal and without `--yes`, it prints the plan and exits with code 2.
+4. **Installs** the core and the selected packs, and writes the lock file.
+5. **Prints next steps**: how to verify discovery in each client, how to run
+   `update` and `contribute`, and that the installed `upstream-agent` can
+   drive both.
+
+Pass `--packs python,docker` or `--profile python-api-docker` to skip
+detection, and `--dry-run` to print the plan without writing. Under `npx`, the
+CLI keeps a source clone in `$SWE_AGENTS_HOME/source`, by default
+`.swe-agents/source` in your home directory, and records its exact commit in
+the lock.
+
+In this README, `swe-agents <command>` means
+`npx --yes github:startmeupai/swe-agents <command>` from your repository, or
+`pnpm swe-agents <command> --target <dir>` from a clone.
+
+### Work From a Clone
+
+Use Node.js 22.15.0 and the pnpm version pinned in `package.json`.
+
+```bash
+git clone https://github.com/startmeupai/swe-agents.git
+cd swe-agents
 corepack enable
 pnpm install --frozen-lockfile
-pnpm check:setup
-pnpm check:agents
-pnpm check:skills
-pnpm check:references
-pnpm check:sanitization
-pnpm lint:markdown
 pnpm check:all
 ```
 
-Each command proves only its named layer. A green static check does not prove a
-browser journey, provider action, deployment, or human approval.
+A clone or a fork is used as the source as it is: the lock records its
+`origin` URL and `HEAD` commit. Preview and then install a profile into your
+repository:
 
-The workflow in [`.github/workflows/reference-checks.yml`](.github/workflows/reference-checks.yml)
-runs the frozen install and full check suite on Linux and Windows. The workflow
-file is not evidence that either hosted job has run; the publication checklist
-keeps that gate open until GitHub records both results.
+```bash
+pnpm swe-agents install --target ../my-repo --profile python-api-docker --dry-run
+pnpm swe-agents install --target ../my-repo --profile python-api-docker
+```
 
-## Browser Evidence Example
+`pnpm stacks:install -- <options>` runs the same installer with the same
+options.
 
-The tracked browser manifest is a schema-validated template, not runtime proof.
-Its status is `not-collected`, each step is `not-run`, and it references no
-screenshots. A collected evidence manifest must include timestamps, observations,
-console/network notes, mutation disclosures, and existing non-empty PNG files.
-The deterministic browser-evidence check rejects missing or duplicate artifacts
-and prevents templates from claiming a pass.
+## What the Installer Writes
 
-## Provenance and Repository Operations
+`--dry-run` prints the plan and writes nothing. Use `--packs python,docker`
+instead of `--profile` for a custom combination. Required packs are added
+transitively, and the installer stops on a missing pack, a dependency cycle, a
+declared conflict, or a duplicate persona or skill name. The target receives:
 
-[`PROVENANCE.json`](PROVENANCE.json) records the private source base revision and
-explicitly avoids claiming a clean worktree or byte-for-byte ancestry.
-[`SOURCE_MAP.md`](SOURCE_MAP.md) records artifact-level derivation. Neither file
-contains a local filesystem path.
+```text
+AGENTS.md                         # core rules + one "## <Pack> rules" section per pack
+.agents/skills/<name>/SKILL.md    # skills for Codex, Copilot, and Cursor
+.claude/agents/<name>.md          # personas for Claude Code, Copilot in VS Code, and Cursor
+.claude/skills/<name>/SKILL.md    # copy of .agents/skills for Claude Code
+.github/agents/<name>.agent.md    # personas for the Copilot cloud agent
+.github/copilot-instructions.md   # short pointer to AGENTS.md, created only if absent
+.codex/agents/<name>.toml         # personas for Codex
+.codex/config.toml                # [agents] enabled = true, Codex's default
+.agents/stacks.lock.json          # source repo, ref, and commit; packs; file hashes and origins
+```
 
-Contribution, security, ownership, and release expectations are documented in
-[`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), the
-[comment-only CODEOWNERS template](.github/CODEOWNERS), and
-[`docs/releases-and-versioning.md`](docs/releases-and-versioning.md). Actual
-owners, a private reporting contact, licensing, CI results, and publication
-approval remain open human gates.
+- **Lock file.** `.agents/stacks.lock.json` (version 2) records the source
+  repository URL, ref, and commit; the profile or pack list; pack versions; a
+  SHA-256 hash of each installed file as written; and the canonical origin of
+  each copied persona and skill file. Commit it with the installed files;
+  `update` and `contribute` read it.
+- **Local-edit protection.** `install` does not overwrite a file whose hash no
+  longer matches the lock unless you pass `--force`. `update` merges such a
+  file instead.
+- **No `CLAUDE.md`.** By default, Claude Code reads `AGENTS.md` only when no
+  `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` exists in the working
+  directory or any directory above it, so fold such a file's content into
+  `AGENTS.md`.
+- **No symlinks.** Skills are copied to both directories, so Windows works.
+- **Verify.** In Claude Code, `/memory` (or `/context`) shows `AGENTS.md` and
+  `/skills` lists the skills. Copilot CLI keeps the first skill it finds per
+  name. In other Copilot surfaces and in Cursor, whether each skill is listed
+  once even though two directories hold it is unverified; check your client
+  version.
 
-## Least Privilege
+## Keep It Updated
 
-Give an agent only the read/write scope, environment, resource, and duration it
-needs. Prefer read-only credentials. Re-authorize mutations at apply time.
-Never let model output directly authorize writes, tool calls, or tenant access.
-Production-impacting and destructive actions require explicit authority.
+```bash
+swe-agents update --dry-run
+swe-agents update
+```
 
-## Adapting This Reference
+`update` reads the lock, fetches the same source repository at the locked ref
+or at `--ref <git-ref>`, and reinstalls the locked profile or pack list.
 
-1. Replace the fictional directory conventions with the destination repository's.
-2. Keep the instruction/agent/skill separation intact.
-3. Remove personas and skills that have no real owner or workflow.
-4. Add repository-specific deterministic checks before adding prose rules.
-5. Define plan/report directories and lifecycle transitions explicitly.
-6. Add access profiles without embedding credentials or personal information.
-7. Update [`SOURCE_MAP.md`](SOURCE_MAP.md) for every adapted artifact.
-8. Run all checks and complete [`REVIEW_CHECKLIST.md`](REVIEW_CHECKLIST.md).
+| File in the lock | Result |
+| --- | --- |
+| Unchanged since the last install | Refreshed to the new upstream content |
+| Edited locally; the edit merges cleanly | `merge`: your edit and the upstream change are both kept |
+| Edited locally; the edit overlaps an upstream change | `skip-conflict`: nothing is written; resolve it by hand or pass `--force` |
+| No longer part of the selection | Removed when unedited; left in place and unmanaged when edited |
 
-## Human Review Before Publication
+The merge is a three-way `git merge-file`: the base is the file as the
+installer rendered it at the lock's `source.commit`, "ours" is your file, and
+"theirs" is the new rendered content. The lock records the new upstream hash,
+never the merged one, so a merged file stays marked as edited and merges again
+next time. The `AGENTS.md` managed block follows the same rules, and text
+outside the block is never touched.
 
-The owner must verify technical accuracy, sanitization, naming, trigger quality,
-script portability, cross-platform runtime behavior, examples, and licensing.
-The authoritative open list is [`REVIEW_CHECKLIST.md`](REVIEW_CHECKLIST.md).
+Files the lock does not list are yours: `update` never changes or removes them,
+and it skips a new upstream file whose path you already use. `--no-merge` keeps
+every edited file as it is, and `--force` replaces edited and conflicting files
+with upstream content. A lock written before version 2 has no origins, so its
+edited files cannot be merged on that run; every `update` or `install` writes
+a version 2 lock for the next one.
 
-## Further Reading
+## Send Improvements Back
+
+When you improve an installed persona or skill, or write a new one, offer it
+upstream:
+
+```bash
+swe-agents contribute --dry-run
+swe-agents contribute
+```
+
+`contribute` runs locally and never pushes. It carries each local edit onto
+the canonical file at the lock's commit, collects personas and skills the lock
+does not list, scans both for secrets, blocked terms, and your project's own
+name, and writes a bundle to `.agents/contributions/<slug>/`: patches against
+the canonical files, copies of new files, a `manifest.json`, and a
+`SUMMARY.md` with a pull request body draft. A secret hit fails the command
+and writes nothing. Edits to the `AGENTS.md` managed block are listed but not
+bundled. The bundle is a local working artifact; do not commit it.
+
+The core `upstream-agent` persona drives both loops with the `upstream-update`
+and `upstream-contribution` skills. Before any outward-facing step, it shows
+you the final diff and pull request body and waits for your confirmation. It
+then uses your own `gh` login to fork SWE Agents when you cannot push to it,
+push a `contrib/<slug>` branch to that fork, and open a pull request against
+the `test` branch. It never forks or pushes your project. See
+[`CONTRIBUTING.md`](CONTRIBUTING.md#contribution-workflow) for the three ways
+to contribute.
+
+## Client Discovery
+
+| Client | Instructions | Personas | Skills |
+| --- | --- | --- | --- |
+| Codex | `AGENTS.md` | `.codex/agents/*.toml` | `.agents/skills` |
+| Claude Code | `AGENTS.md` | `.claude/agents` | `.claude/skills` |
+| GitHub Copilot | `AGENTS.md` (cloud agent, CLI, GitHub.com code review, VS Code chat), plus a short `.github/copilot-instructions.md` | `.github/agents/*.agent.md` (cloud agent), `.claude/agents` (VS Code) | `.github/skills`, `.claude/skills`, `.agents/skills` |
+
+Cursor-compatible clients can use `AGENTS.md`, `.claude/agents`, and
+`.agents/skills`. Discovery and invocation syntax vary by product version;
+examples such as `@research-agent` express routing intent, not a command that
+is guaranteed to work in every client.
+
+## Available Packs
+
+Each pack README lists its skills, rules, commands, and changelog.
+
+| Pack | Kind | Personas added | Requires |
+| --- | --- | --- | --- |
+| [`typescript`](stacks/typescript/README.md) | language | `typescript-feature-agent`, `typescript-test-agent` | none |
+| [`web-ui`](stacks/web-ui/README.md) | framework | `ui-agent`, `ui-sm-agent` | `typescript` |
+| [`playwright`](stacks/playwright/README.md) | verification | `playwright-investigator-agent`, `playwright-generator-agent`, `playwright-healer-agent`, `e2e-hardening-agent`, `plan-hv-agent`, `test-and-prove-agent` | `typescript` |
+| [`cloudflare`](stacks/cloudflare/README.md) | platform | `cf-agent` | none |
+| [`python`](stacks/python/README.md) | language | `python-feature-agent`, `python-test-agent` | none |
+| [`docker`](stacks/docker/README.md) | platform | `docker-agent` | none |
+| [`supabase`](stacks/supabase/README.md) | platform | `supabase-agent` | none |
+
+## Profiles
+
+- `reference`: every pack; generates this repository's own runtime directories.
+- `nextjs-cloudflare`: `typescript`, `web-ui`, `playwright`, `cloudflare`.
+- `nextjs-supabase`: `typescript`, `web-ui`, `playwright`, `supabase`.
+- `python-api-docker`: `python`, `docker`.
+
+## Canonical and Generated Files
+
+Canonical personas, skills, and rules live under `core/` and `stacks/`.
+`.claude/`, `.agents/`, `.codex/`, and `.github/agents/` are generated: they
+are this repository's own install of the `reference` profile, committed so a
+clone works without an extra setup step.
+
+After editing a canonical persona, skill, rule fragment, or pack manifest, run:
+
+```bash
+pnpm sync:setup
+pnpm check:all
+```
+
+Commit the canonical change and every generated change together. Do not edit
+the generated directories directly.
+
+A persona narrows its access with a Claude Code `tools` allowlist. One without
+`Edit`, `Write`, and `NotebookEdit` is described as "Read-only" and gets a
+read-only Codex sandbox; see [security boundaries](docs/security-boundaries.md).
+
+## Operating Model
+
+1. A human defines intent, scope, authority, and acceptance criteria.
+2. Research establishes repository facts with evidence.
+3. Planning turns those facts into staged, reviewable work.
+4. Core and pack specialists implement only the workstreams they own.
+5. Deterministic checks, using the commands each pack declares, prove static,
+   test, policy, and build claims.
+6. Independent review and runtime workflows verify behavior.
+7. Provider, deployment, security, and human gates remain explicit.
+8. Sanitized evidence informs the next iteration.
+
+Choose the narrowest persona that owns the outcome and load only the skills it
+needs. See [agent routing](docs/agent-routing.md), the
+[architecture](docs/architecture.md), and the
+[verification model](docs/verification-model.md).
+
+## Repository Structure
+
+| Location | Purpose |
+| --- | --- |
+| `AGENTS.md`, `.github/copilot-instructions.md` | Rules for working in this repository |
+| `.github/AGENTS.md` | Persona catalog for core and packs |
+| `core/` | Canonical stack-neutral personas, skills, and rules |
+| `stacks/` | Canonical stack packs |
+| `profiles/` | Named pack combinations |
+| `scripts/checks/` | Deterministic validation of core, packs, and profiles |
+| `scripts/stacks/` | The `swe-agents` CLI: detection, installation, updates, and contribution bundles |
+| `scripts/runtime/` | Self-install of the `reference` profile into this repository |
+| `.claude/`, `.agents/`, `.codex/`, `.github/agents/` | Generated runtime copies |
+| `examples/` | Fictional plans, reports, handoffs, and evidence |
+| `docs/` | Architecture and operating guidance |
+
+## Adapting the Seed
+
+1. Install the smallest profile or pack set that matches your stack; `init`
+   suggests one. Leave a pack out rather than deleting its files after
+   installation.
+2. Replace the fictional plan, report, and evidence locations with your own.
+3. Add repository-specific deterministic checks before adding prose rules.
+4. Configure access without embedding credentials or personal information.
+
+To add or change a pack, read `stacks/README.md` and the
+[stack-pack guide](docs/stack-packs.md), then follow the pack checklist in
+[`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## Contributing
+
+Issues and pull requests are welcome; pull requests target the `test` branch.
+Start with [`CONTRIBUTING.md`](CONTRIBUTING.md), follow the
+[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and use
+[`SUPPORT.md`](SUPPORT.md) to choose the right support channel.
+
+For a security vulnerability, use the repository's
+[private vulnerability reporting](https://github.com/startmeupai/swe-agents/security/advisories/new)
+instead of a public issue. See [`SECURITY.md`](SECURITY.md).
+
+## Documentation
 
 - [Architecture](docs/architecture.md)
+- [Stack packs](docs/stack-packs.md)
 - [Agent routing](docs/agent-routing.md)
 - [Plan lifecycle](docs/plan-lifecycle.md)
 - [Verification model](docs/verification-model.md)
 - [Security boundaries](docs/security-boundaries.md)
+- [Releases and versioning](docs/releases-and-versioning.md)
 - [Workshop example](docs/workshop-example.md)
 - [Source map](SOURCE_MAP.md)
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE).

@@ -2,6 +2,9 @@
 
 ## Stage 1: Authorization Contract
 
+**Goal:** Enforce Project Alpha manager scope at the settings mutation.
+**Assigned Specialist:** `rbac-agent`
+**Dependencies:** None
 **Status:** Complete
 
 - [x] Define manager and restricted profile expectations.

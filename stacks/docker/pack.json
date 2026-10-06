@@ -1,0 +1,23 @@
+{
+  "name": "docker",
+  "kind": "platform",
+  "version": "0.1.0",
+  "description": "Docker container platform: pinned, hardened, reproducible image builds and local compose configuration with registry and deployment gates; commands are adjustable examples.",
+  "requires": [],
+  "conflicts": [],
+  "detect": ["Dockerfile", "**/Dockerfile*", "compose.yaml", "docker-compose.yml"],
+  "commands": {
+    "build": "docker build .",
+    "compose_validate": "docker compose config",
+    "lint": "hadolint Dockerfile"
+  },
+  "agents": ["docker-agent"],
+  "skills": ["docker-ops"],
+  "routes": [
+    {
+      "outcome": "Own container build and compose configuration",
+      "owner": "docker-agent",
+      "skills": ["docker-ops", "github-actions"]
+    }
+  ]
+}

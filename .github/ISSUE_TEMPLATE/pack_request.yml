@@ -1,0 +1,52 @@
+name: Stack pack request
+description: Propose a new stack pack or a change to an existing one.
+title: "[Pack]: "
+labels:
+  - enhancement
+body:
+  - type: input
+    id: pack
+    attributes:
+      label: Pack name
+      description: Kebab-case name of the new or existing pack, such as `python` or `docker`.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - language
+        - framework
+        - platform
+        - verification
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: Ownership gap
+      description: Which outcome do the core and the existing packs not own well, and what real workflows does this stack have?
+    validations:
+      required: true
+  - type: textarea
+    id: contents
+    attributes:
+      label: Proposed personas, skills, and commands
+      description: List persona and skill names (new names start with the pack name), the lint, typecheck, and test commands, and the routes.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Requires and conflicts
+      description: Name the packs this one builds on and any packs it cannot be installed with, and why.
+  - type: checkboxes
+    id: portability
+    attributes:
+      label: Portability
+      options:
+        - label: The pack does not depend on private product code, accounts, or credentials.
+          required: true
+        - label: I read stacks/README.md and docs/stack-packs.md.
+          required: true

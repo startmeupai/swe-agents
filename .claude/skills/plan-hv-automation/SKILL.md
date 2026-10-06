@@ -18,7 +18,7 @@ Use when a plan has open runtime or human-verification gates after implementatio
 1. Classify each open gate as browser-observable, fixture-blocked, or human-only.
 2. Confirm non-production environment and resolve exact profiles.
 3. Convert pass and failure signals into falsifiable assertions.
-4. Run observable gates and capture assertion-moment evidence.
+4. Run observable gates through the pack's e2e command (`pnpm exec playwright test`) or a driven browser session, and capture assertion-moment evidence.
 5. Tick only fresh observed passes; blocker-note failures and inconclusive gates.
 6. Request code remediation with the exact rerun condition.
 7. Ask humans only for the genuine judgment/provider remainder.

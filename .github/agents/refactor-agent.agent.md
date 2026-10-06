@@ -35,8 +35,8 @@ Use for migrations, cleanup, duplication removal, and standards alignment.
 
 ## Related Skills
 
-- [refactor-modernization](../skills/refactor-modernization/SKILL.md)
-- [test-generation](../skills/test-generation/SKILL.md)
+- `refactor-modernization`
+- `test-generation`
 
 ## Example Invocation
 

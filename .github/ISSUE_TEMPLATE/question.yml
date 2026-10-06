@@ -1,0 +1,30 @@
+name: Question
+description: Ask for help understanding or adapting the reference.
+title: "[Question]: "
+labels:
+  - question
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What are you trying to do?
+      description: Describe the outcome and the part of the reference involved.
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: Client and version
+      description: For example, Codex, Claude Code, or GitHub Copilot and its version.
+  - type: textarea
+    id: attempted
+    attributes:
+      label: What have you tried?
+      description: Include relevant public examples and verification commands.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: This question contains no credentials, private code, or vulnerability details.
+          required: true

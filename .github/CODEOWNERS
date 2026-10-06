@@ -1,6 +1,7 @@
-# Publication blocker: replace this comment-only template with actual GitHub
-# users or teams before publication. No owner is inferred from a local account,
-# filesystem path, or source repository.
-#
-# Example syntax only:
-# * @example-org/reference-maintainers
+# The repository maintainer reviews all changes. More-specific rules document the
+# highest-risk surfaces and make ownership visible in pull requests.
+* @nhawat
+/.github/ @nhawat
+/scripts/ @nhawat
+/PROVENANCE.json @nhawat
+/SOURCE_MAP.md @nhawat

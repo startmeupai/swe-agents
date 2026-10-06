@@ -1,0 +1,48 @@
+name: Bug report
+description: Report a reproducible problem in the reference or its checks.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve SWE Agents. Remove credentials, private
+        domains, customer information, and proprietary repository content.
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: Client and version
+      description: For example, Codex, Claude Code, or GitHub Copilot and its version.
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, Node.js version, and pnpm version.
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest safe sequence that reproduces the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification output
+      description: List the commands that ran and summarize their output.
+      render: shell
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Security check
+      options:
+        - label: This report does not contain a vulnerability or sensitive data.
+          required: true

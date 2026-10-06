@@ -24,7 +24,8 @@ Use for cleanup, migration, duplication removal, typing, or boundary correction 
 
 ## Deterministic Checks
 
-- Typecheck, lint affected code, run regression tests, and search for stale references.
+- Run static and type checks where the language has them, lint affected code,
+  run regression tests, and search for stale references.
 
 ## Safety and Permission Boundaries
 

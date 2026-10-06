@@ -16,9 +16,9 @@ Use when a verified journey needs durable screenshots and a machine-readable man
 ## Workflow
 
 1. Confirm the environment and run prerequisite checks.
-2. Execute each numbered step exactly once in order.
+2. Execute each numbered step exactly once in order, through the pack's e2e command (`pnpm exec playwright test`) or a driven browser session.
 3. Capture evidence immediately after each significant observation.
-4. Record browser, viewport, route, timestamp, and outcome in a manifest.
+4. Record browser, viewport, route, timestamp, and `pass` or `fail` outcome in an `evidence` manifest; a manifest without a collected run stays a `template` with `not-run` steps.
 5. Redact personal data, tokens, signed URLs, and sensitive payloads.
 6. Publish only when explicitly authorized; otherwise keep the bundle local.
 

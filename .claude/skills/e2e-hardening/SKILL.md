@@ -25,7 +25,7 @@ Use for proactive release hardening of a nominally complete feature or module.
 
 ## Deterministic Checks
 
-- Complete matrix accounting, focused browser results, and durability criteria for retained specs.
+- Complete matrix accounting, focused browser results from the pack's e2e command (`pnpm exec playwright test`), and durability criteria for retained specs.
 
 ## Safety and Permission Boundaries
 

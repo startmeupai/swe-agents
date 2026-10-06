@@ -31,11 +31,13 @@ Use to execute, continue, or finish an already approved plan.
 
 ## Handoff Expectations
 
-- Route browser gates to `plan-hv-agent` and code-caused blockers to the owning specialist.
+- Route browser gates to the installed verification pack's gate owner when one
+  exists; otherwise leave them open and tagged as browser gates.
+- Route code-caused blockers to the owning specialist.
 
 ## Related Skills
 
-- [plan-operations](../skills/plan-operations/SKILL.md)
+- `plan-operations`
 
 ## Example Invocation
 

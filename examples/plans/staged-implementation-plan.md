@@ -10,6 +10,7 @@ prove both allowed and denied behavior. No redesign or deployment is included.
 
 ## Stage 1: Authorization Contract
 
+**Goal:** Enforce Project Alpha manager scope at the settings mutation.
 **Assigned Specialist:** `rbac-agent`
 **Dependencies:** None
 **Status:** Pending
@@ -20,6 +21,7 @@ prove both allowed and denied behavior. No redesign or deployment is included.
 
 ## Stage 2: Focused Tests
 
+**Goal:** Prove allowed and denied settings updates at the mutation boundary.
 **Assigned Specialist:** `test-agent`
 **Dependencies:** Stage 1
 **Status:** Pending
@@ -29,6 +31,7 @@ prove both allowed and denied behavior. No redesign or deployment is included.
 
 ## Stage 3: Browser Verification
 
+**Goal:** Confirm both profiles behave correctly in the browser.
 **Assigned Specialist:** `playwright-generator-agent`
 **Dependencies:** Stage 2
 **Status:** Pending

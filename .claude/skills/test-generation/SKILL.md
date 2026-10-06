@@ -17,14 +17,16 @@ Use when behavior needs focused automated coverage below the browser layer.
 
 1. Choose the narrowest test layer that proves the contract.
 2. List success, boundary, failure, and authorization cases.
-3. Isolate external dependencies with typed fakes at stable boundaries.
+3. Isolate external dependencies with fakes that honor the dependency's
+   contract at stable boundaries.
 4. Write behavior-focused assertions that fail on meaningful regression.
 5. Remove timing dependence and restore mutated state.
 6. Run focused tests before broader suites.
 
 ## Deterministic Checks
 
-- Focused runner result, typecheck for test code, and stable repeated execution.
+- Focused runner result, type or static checks for test code where the language
+  has them, and stable repeated execution.
 
 ## Safety and Permission Boundaries
 

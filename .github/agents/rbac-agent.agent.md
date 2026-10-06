@@ -35,8 +35,8 @@ Use for roles, membership, invitations, guards, tenant scope, and authorization 
 
 ## Related Skills
 
-- [rbac-integration](../skills/rbac-integration/SKILL.md)
-- [access-control-audit](../skills/access-control-audit/SKILL.md)
+- `rbac-integration`
+- `access-control-audit`
 
 ## Example Invocation
 

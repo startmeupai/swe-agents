@@ -1,22 +1,17 @@
-import { basename, join } from 'node:path'
-import { finish, label, parseFrontmatter, root, walk } from './lib.mjs'
+import { existsSync } from 'node:fs'
+import { allEntries, duplicateProblems, finish, parseFrontmatter } from './lib.mjs'
 
-const groups = [
-  walk(join(root, '.github/agents'), path => path.endsWith('.md')),
-  walk(join(root, '.github/skills'), path => basename(path) === 'SKILL.md')
-]
-const failures = []
-let count = 0
+// Persona and skill names are globally unique across core and every pack, so
+// any pack combination installs without collisions.
+const { agents, skills } = allEntries()
+const entries = [...agents, ...skills]
+const failures = duplicateProblems(entries)
 
-for (const files of groups) {
-  const seen = new Map()
-  for (const file of files) {
-    const { data } = parseFrontmatter(file)
-    if (!data?.name) continue
-    count += 1
-    if (seen.has(data.name)) failures.push(`duplicate name ${data.name}: ${seen.get(data.name)} and ${label(file)}`)
-    else seen.set(data.name, label(file))
-  }
-}
+// Frontmatter names must not collide either, even where they disagree with the file name.
+const declared = entries.map(entry => {
+  const name = existsSync(entry.source) ? parseFrontmatter(entry.source).data?.name : null
+  return { ...entry, name: typeof name === 'string' && name ? name : entry.name }
+})
+for (const problem of duplicateProblems(declared)) if (!failures.includes(problem)) failures.push(`frontmatter ${problem}`)
 
-finish('Duplicate-name check', failures, `Duplicate-name check passed: ${count} names are unique within their catalogs.`)
+finish('Duplicate-name check', failures, `Duplicate-name check passed: ${agents.length} persona and ${skills.length} skill names are unique across core and all packs.`)
