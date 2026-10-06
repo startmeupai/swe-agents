@@ -36,8 +36,9 @@ it grants no credentials, provider access, or deployment authority. Platform
 packs such as `cloudflare`, `docker`, and `supabase` still require explicit
 authority for production, destructive, external, or secret-changing actions.
 Review a pack's rules and commands before installing it, and review the
-installer's dry run before it writes into a repository. `init` shows the packs
-it detected and asks before writing; `--yes` skips that prompt.
+installer's dry run before it writes into a repository. `init`, `install`, and
+`update` show the plan and ask before writing; `--yes` skips that prompt, and
+without a terminal nothing is written unless it is passed.
 
 Security audits report evidence and limitations; they do not silently change
 authorization policy.

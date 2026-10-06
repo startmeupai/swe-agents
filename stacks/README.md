@@ -214,13 +214,15 @@ pnpm stacks:install -- --target ../my-repo --packs web-ui,cloudflare
 | `--target <dir>` | Target repository; required |
 | `--profile <name>` | Install `profiles/<name>.json`; use this or `--packs` |
 | `--packs a,b,c` | Install an explicit list; required packs are added |
+| `--yes` | Apply the plan without asking; without a terminal, nothing is written unless it is set |
 | `--dry-run` | Print the plan, link notes, and routing table; write nothing |
 | `--force` | Overwrite edited files, files the installer did not create, and an edited managed block; remove edited files the selection no longer installs |
 
 The installer prints one line per planned change, a summary, any skipped
 files, relative links the target cannot resolve, a warning when the target has
-`CLAUDE.md` or `CLAUDE.local.md`, the merged routing table for the installed
-personas, and a final `Result:` line. A second run with the same sources and
+`CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` and none of them
+imports `@AGENTS.md`, the merged routing table for the installed
+personas, and a final `Result:` line. It asks before writing anything. A second run with the same sources and
 selection prints `Result: no changes`.
 
 | Action | Meaning |
@@ -316,7 +318,8 @@ From the target repository, `swe-agents update` (run as
 newest source and three-way merges local edits:
 
 1. Run `swe-agents update --dry-run` and read the plan.
-2. Run `swe-agents update`. Unedited files and the managed block are
+2. Run `swe-agents update` and confirm the plan it prints, or pass `--yes`
+   where no terminal can answer. Unedited files and the managed block are
    refreshed. An edited file is merged against its recorded base and reports
    `merge`; an overlapping edit reports `skip-conflict` and is left untouched.
 3. Resolve each `skip-conflict` by hand from the printed hunks, then rerun

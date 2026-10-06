@@ -64,7 +64,7 @@ jobs:
         run: |
           target="$STACKS_TMP/stacks-install"
           mkdir -p "$target"
-          node scripts/stacks/install.mjs --target "$target" --profile python-api-docker
+          node scripts/stacks/install.mjs --target "$target" --profile python-api-docker --yes
           test -f "$target/.agents/stacks.lock.json"
           node scripts/stacks/install.mjs --target "$target" --profile python-api-docker | tee "$STACKS_TMP/stacks-reinstall.log"
           grep -qx 'Result: no changes' "$STACKS_TMP/stacks-reinstall.log"

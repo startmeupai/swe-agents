@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, realpathSync, rmdirSync, rmSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, posix, resolve } from 'node:path'
+import { createInterface } from 'node:readline/promises'
 import { pathToFileURL } from 'node:url'
 import { StackError, collectCatalog, listValue, loadCore, loadPacks, loadProfiles, namePattern, parseFrontmatterText, read, resolvePacks, root } from '../checks/lib.mjs'
 import {
@@ -627,10 +628,32 @@ function unresolvedLinks(plan) {
   return unresolved
 }
 
-export function reportOutcome(plan, { command = 'install', dryRun = false, log = console.log, sourceDir = plan.source?.dir ?? root, links = true, routing = true } = {}) {
+// Claude Code reads AGENTS.md only when none of these files exists, unless one
+// of them imports it with an `@AGENTS.md` line.
+const claudeFiles = ['CLAUDE.md', '.claude/CLAUDE.md', 'CLAUDE.local.md']
+const importsAgentsMd = /(?:^|\s)@(?:\.{1,2}\/)*AGENTS\.md(?=\s|$)/m
+
+export function claudeMemoryNotice(target) {
+  const present = claudeFiles.filter(name => existsSync(join(target, name)))
+  if (!present.length) return null
+  if (present.some(name => importsAgentsMd.test(read(join(target, name))))) return null
+  return `Warning: ${present.join(', ')} exist${present.length === 1 ? 's' : ''}, so Claude Code does not read AGENTS.md on its own. Add the line @AGENTS.md to CLAUDE.md to import it, and keep your own content.`
+}
+
+// What a skipped file means for the person who owns it.
+function skipAdvice(step) {
+  if (step.action !== 'skip-unowned') return step.note
+  if (step.path === '.codex/config.toml') return 'your Codex config is kept; Codex enables agents by default, so nothing needs adding'
+  if (step.path === 'AGENTS.md') return step.note
+  return 'yours is kept; the copies for other clients use the upstream version of this name, so rename yours to keep both'
+}
+
+export function reportNotices(plan, { command = 'install', log = console.log, sourceDir = plan.source?.dir ?? root, links = true } = {}) {
   const conflicts = plan.steps.filter(step => step.action === 'skip-conflict')
-  const skipped = plan.steps.filter(step => step.action.startsWith('skip') && step.action !== 'skip-conflict')
+  const unowned = plan.steps.filter(step => step.action === 'skip-unowned')
+  const edited = plan.steps.filter(step => step.action.startsWith('skip') && !['skip-conflict', 'skip-unowned'].includes(step.action))
   const released = plan.steps.filter(step => step.action === 'keep-edited')
+  const removed = plan.steps.filter(step => step.action === 'remove')
   if (conflicts.length) {
     log(`\n${conflicts.length} file(s) conflict with the upstream change; nothing was written to them:`)
     for (const step of conflicts) {
@@ -643,18 +666,25 @@ export function reportOutcome(plan, { command = 'install', dryRun = false, log =
     }
     log(`Edit each file so it keeps the local intent and carries the upstream change, then rerun ${command}; it then merges against the new version. --force replaces the files with the upstream version instead.`)
   }
-  if (skipped.length) {
-    log(`\nSkipped ${skipped.length} file(s) to protect local content; review them, then rerun with --force to overwrite:`)
-    for (const step of skipped) log(`  ${step.path}: ${step.note}`)
+  if (unowned.length) {
+    log(`\nKept ${unowned.length} existing file(s) that swe-agents did not install; nothing is written to them:`)
+    for (const step of unowned) log(`  ${step.path}: ${skipAdvice(step)}`)
+  }
+  if (edited.length) {
+    log(`\nKept ${edited.length} file(s) edited since the last install; nothing is written to them:`)
+    for (const step of edited) log(`  ${step.path}: ${step.note}`)
+  }
+  if (unowned.length || edited.length) log('Only --force replaces kept files with the upstream version, and it discards their content.')
+  if (removed.length) {
+    log(`\nRemoves ${removed.length} file(s) that swe-agents installed, that are unedited, and that this selection no longer includes.`)
   }
   if (released.length) {
-    log(`\nLeft ${released.length} edited file(s) that this selection no longer installs; they are now unmanaged, so delete them if unneeded:`)
+    log(`\nLeaves ${released.length} edited file(s) that this selection no longer installs; they become yours, so delete them if unneeded:`)
     for (const step of released) log(`  ${step.path}`)
   }
   if (plan.previous?.ignored?.length) log(`\nIgnored ${plan.previous.ignored.length} lock entr(ies) outside the installer's paths: ${plan.previous.ignored.join(', ')}`)
-  for (const name of ['CLAUDE.md', 'CLAUDE.local.md']) {
-    if (existsSync(join(plan.target, name))) log(`\nWarning: ${name} exists; Claude Code then skips AGENTS.md by default. Fold its content into AGENTS.md.`)
-  }
+  const claude = claudeMemoryNotice(plan.target)
+  if (claude) log(`\n${claude}`)
   if (links) {
     const unresolved = unresolvedLinks(plan)
     if (unresolved.size) {
@@ -662,6 +692,9 @@ export function reportOutcome(plan, { command = 'install', dryRun = false, log =
       for (const item of unresolved) log(`  ${item}`)
     }
   }
+}
+
+export function reportResult(plan, { dryRun = false, log = console.log, routing = true } = {}) {
   if (routing) {
     log('\nRouting table for the installed personas (paste into your routing guide):\n')
     log(routingTable(routingRows(plan.catalog, root)))
@@ -672,21 +705,65 @@ export function reportOutcome(plan, { command = 'install', dryRun = false, log =
   else log(count ? `Result: ${count} change(s) written` : 'Result: no changes')
 }
 
-// `install`: plan, report, and write. Returns the exit code.
-export function runInstall({ target, targetLabel = target, profile = null, packs = null, force = false, dryRun = false, source = null, log = console.log }) {
+export function reportOutcome(plan, options = {}) {
+  reportNotices(plan, options)
+  reportResult(plan, options)
+}
+
+// A y/N prompt on the terminal, or null when there is no terminal to ask in.
+// End of input or an interrupt counts as no.
+export function terminalConfirm() {
+  if (!process.stdin.isTTY || !process.stdout.isTTY) return null
+  return async question => {
+    const prompt = createInterface({ input: process.stdin, output: process.stdout })
+    const closed = new Promise(resolveClosed => prompt.once('close', () => resolveClosed('')))
+    try {
+      const answer = await Promise.race([prompt.question(question), closed])
+      return /^y(?:es)?$/i.test(String(answer).trim())
+    } catch (error) {
+      if (error?.code === 'ABORT_ERR') return false
+      throw error
+    } finally {
+      prompt.close()
+    }
+  }
+}
+
+// Every writing command previews first: the plan and its notices are already
+// printed, so a dry run stops here, `yes` applies, and otherwise `confirm` asks.
+// Without a terminal (`confirm` is null) nothing is written. Returns true to apply.
+export async function confirmPlan(plan, { dryRun = false, yes = false, confirm = null, targetLabel = plan.target, log = console.log } = {}) {
+  if (dryRun) return false
+  if (yes || !changeCount(plan)) return true
+  if (!confirm) {
+    log('\nNothing written: no terminal to confirm in. Review the plan above, then rerun with --yes to apply it.')
+    return false
+  }
+  if (await confirm(`\nApply ${changeCount(plan)} change(s) to ${targetLabel}? [y/N] `)) return true
+  log('Nothing written.')
+  return false
+}
+
+// `install`: plan, preview, confirm, and write. Returns 2 when nothing was
+// written because the plan was not confirmed, else 0.
+export async function runInstall({ target, targetLabel = target, profile = null, packs = null, force = false, dryRun = false, yes = false, confirm = null, source = null, log = console.log }) {
   if (!existsSync(target) || !statSync(target).isDirectory()) throw new InstallError(`Target ${targetLabel} is not an existing directory`)
   const plan = planInstall({ target, profile, packs, force, source })
   if (!dryRun && !commitPattern.test(plan.lockData.source.commit ?? '')) throw new InstallError(missingCommitMessage(plan.source))
   reportPlan(plan, { command: 'install', dryRun, targetLabel, log })
-  if (!dryRun) applyPlan(plan)
-  reportOutcome(plan, { command: 'install', dryRun, log })
+  reportNotices(plan, { command: 'install', log })
+  const apply = await confirmPlan(plan, { dryRun, yes, confirm, targetLabel, log })
+  if (!dryRun && !apply) return 2
+  if (apply) applyPlan(plan)
+  reportResult(plan, { dryRun, log })
   return 0
 }
 
 // `update`: reinstall the locked selection from `source`, three-way merging
 // edited files against the rendering at the lock's commit unless `merge` is
-// false. Returns 2 when any file still needs a human decision, else 0.
-export async function runUpdate({ target, targetLabel = target, source, force = false, merge = true, dryRun = false, log = console.log }) {
+// false. Previews and confirms like `install`. Returns 2 when nothing was
+// written for want of confirmation or any file still needs a human decision.
+export async function runUpdate({ target, targetLabel = target, source, force = false, merge = true, dryRun = false, yes = false, confirm = null, log = console.log }) {
   const absolute = resolve(target)
   const previous = readLock(absolute)
   if (!previous) throw new InstallError(`${lockPath} not found in ${targetLabel}; run swe-agents init or install first`)
@@ -716,7 +793,10 @@ export async function runUpdate({ target, targetLabel = target, source, force = 
   const plan = planInstall({ target: absolute, ...selection, force, merge: merge && !force, baseOutputs: bases, source })
   if (!dryRun && !commitPattern.test(plan.lockData.source.commit ?? '')) throw new InstallError(missingCommitMessage(plan.source))
   reportPlan(plan, { command: 'update', dryRun, targetLabel, log, extra })
-  if (!dryRun) applyPlan(plan)
-  reportOutcome(plan, { command: 'update', dryRun, log, sourceDir: source?.dir ?? root, links: false, routing: false })
+  reportNotices(plan, { command: 'update', log, sourceDir: source?.dir ?? root, links: false })
+  const apply = await confirmPlan(plan, { dryRun, yes, confirm, targetLabel, log })
+  if (!dryRun && !apply) return 2
+  if (apply) applyPlan(plan)
+  reportResult(plan, { dryRun, log, routing: false })
   return plan.steps.some(step => step.action.startsWith('skip')) ? 2 : 0
 }
