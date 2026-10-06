@@ -102,7 +102,7 @@ AGENTS.md                         # core rules + one "## <Pack> rules" section p
 .github/agents/<name>.agent.md    # personas for the Copilot cloud agent
 .github/copilot-instructions.md   # short pointer to AGENTS.md, created only if absent
 .codex/agents/<name>.toml         # personas for Codex
-.codex/config.toml                # enables Codex custom agents
+.codex/config.toml                # [agents] enabled = true, Codex's default
 .agents/stacks.lock.json          # source repo, ref, and commit; packs; file hashes and origins
 ```
 
@@ -120,8 +120,10 @@ AGENTS.md                         # core rules + one "## <Pack> rules" section p
   `AGENTS.md`.
 - **No symlinks.** Skills are copied to both directories, so Windows works.
 - **Verify.** In Claude Code, `/memory` (or `/context`) shows `AGENTS.md` and
-  `/skills` lists the skills. In Copilot and Cursor, confirm that each skill is
-  listed once even though two directories hold it.
+  `/skills` lists the skills. Copilot CLI keeps the first skill it finds per
+  name. In other Copilot surfaces and in Cursor, whether each skill is listed
+  once even though two directories hold it is unverified; check your client
+  version.
 
 ## Keep It Updated
 

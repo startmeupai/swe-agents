@@ -2,8 +2,9 @@
 
 These rules are for maintainers, contributors, and agents changing this
 reference itself. Every supported client starts here (Copilot through
-`.github/copilot-instructions.md`). There is no `CLAUDE.md`; Claude Code reads
-`AGENTS.md` when no `CLAUDE.md` exists.
+`.github/copilot-instructions.md`). There is no `CLAUDE.md`; by default Claude
+Code reads `AGENTS.md` only when no `CLAUDE.md`, `.claude/CLAUDE.md`, or
+`CLAUDE.local.md` exists here or in any directory above.
 
 ## Canonical and Generated Files
 

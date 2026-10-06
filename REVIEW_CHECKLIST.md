@@ -66,19 +66,24 @@ them, with named evidence.
 - [ ] `SOURCE_MAP.md` covers `core/`, `stacks/`, and `profiles/`, with no stale
   rows for the removed `CLAUDE.md`, `.github/instructions/`, and
   `.github/skills/`.
-- [ ] No `CLAUDE.md` or `CLAUDE.local.md` remains, and Claude Code loads
-  `AGENTS.md` in this repository and in a seeded target.
-- [ ] Copilot and Cursor list each installed skill once in a seeded target.
+- [ ] No `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` remains here or
+  above, and Claude Code loads `AGENTS.md` in this repository and in a seeded
+  target.
+- [ ] Copilot CLI lists each installed skill once in a seeded target; for VS
+  Code, the cloud agent, and Cursor, the observed count is recorded
+  (unverified; check your client version).
 
 ## Runtime Smoke Checks — Still Required
 
 Use this directory as a standalone project. Record client and version,
 operating system, selected agent or skill, and observed result for each test.
 
-- [ ] Codex discovers the custom agents and skills and successfully delegates a
-  read-only reference review to `research-agent`.
-- [ ] Claude Code lists the subagents through `/agents`, discovers skills, and
-  successfully invokes `research-agent` for a read-only reference review.
+- [ ] Codex lists the installed skills under `/skills` and successfully
+  delegates a read-only reference review to `research_agent`, the persona's
+  Codex name.
+- [ ] Claude Code lists the subagents through `/context`, lists the skills
+  through `/skills`, and successfully invokes `research-agent` for a read-only
+  reference review.
 - [ ] Copilot exposes `research-agent` in the agent picker and discovers its
   referenced skill during a read-only reference review.
 - [ ] Cross-platform runtime compatibility has been manually smoke-tested.

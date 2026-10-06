@@ -241,8 +241,8 @@ function nextSteps(plan, label) {
     '',
     'Next steps:',
     `  1. Review and commit what was installed in ${label}: AGENTS.md, ${lockFile}, .agents/, .claude/, .codex/, .github/.`,
-    '  2. Verify discovery in each client you use: Claude Code lists the personas under /agents; Codex lists',
-    '     the skills under /skills; GitHub Copilot shows the personas in its agent picker.',
+    '  2. Verify discovery in each client you use: Claude Code lists the personas under /context and the',
+    '     skills under /skills; Codex lists the skills under /skills; GitHub Copilot shows the personas in its agent picker.',
     `  3. Pull upstream improvements later; edited files are three-way merged: ${run('update')}`,
     `  4. Offer your own persona and skill improvements back: ${run('contribute')}`
   ]

@@ -30,7 +30,7 @@ for (const entry of files) {
   }
   for (const problem of problems) failures.push(`${where}: ${problem}`)
   for (const field of Object.keys(data)) {
-    if (field === 'model') failures.push(`${where}: remove model; models inherit from the user's client`)
+    if (field === 'model') failures.push(`${where}: remove model; personas omit it so each client picks its own default`)
     else if (!allowedFields.includes(field)) failures.push(`${where}: unsupported frontmatter field ${field}; use ${allowedFields.join(', ')}`)
   }
   if (data.name !== entry.name) failures.push(`${where}: name must equal ${entry.name}`)

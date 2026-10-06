@@ -65,9 +65,10 @@ as `pnpm swe-agents <command> --target <adopting repository>`. Below,
 10. Verify discovery in each client the project uses. Claude Code: `/context`
     lists the installed personas and `/skills` lists each skill once. Codex:
     `/skills` lists the installed skills. GitHub Copilot: the agent picker shows
-    the installed personas. Cursor: `AGENTS.md` rules apply and each persona and
-    skill is listed once. Record the client name and version, the operating
-    system, and the observation; a client not checked stays an open human gate.
+    the installed personas. Cursor: `AGENTS.md` rules apply; whether each
+    persona and skill is listed once is unverified, so record what you see.
+    Record the client name and version, the operating system, and the
+    observation; a client not checked stays an open human gate.
 11. Report the evidence below. A merged file stays recorded as edited, so the
     next update merges it again; tell the human, and offer
     `upstream-contribution` for edits that would help other repositories.

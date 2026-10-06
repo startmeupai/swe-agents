@@ -60,7 +60,8 @@ const requiredDirectories = [
 ]
 
 // Retired layout: rules live in core/AGENTS.md and stacks/*/AGENTS.md, skills in
-// core/ and stacks/, and Claude Code reads AGENTS.md only when no CLAUDE.md exists.
+// core/ and stacks/, and Claude Code reads AGENTS.md only when no CLAUDE.md,
+// .claude/CLAUDE.md, or CLAUDE.local.md exists in the working directory or above it.
 const removedPaths = ['CLAUDE.md', 'CLAUDE.local.md', '.github/instructions', '.github/skills']
 
 const failures = []
