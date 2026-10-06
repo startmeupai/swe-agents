@@ -1,0 +1,16 @@
+# Keep the pinned GitHub Actions current. The reference has no npm runtime or
+# development dependencies, so only the actions ecosystem is tracked. Updates
+# target the `test` integration branch like every other contribution.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: test
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns:
+          - '*'
+    commit-message:
+      prefix: ci
