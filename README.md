@@ -68,6 +68,14 @@ Commit the canonical change and every generated change together. Do not edit
 `.codex/agents/`, `.claude/agents/`, `.agents/skills/`, or `.claude/skills/`
 directly.
 
+A persona may narrow its access with Copilot's native `tools` list, such as
+`tools: ['read', 'search', 'execute', 'web']`. The generator translates it into
+a Claude Code `tools` allowlist and, when `edit` is absent, a Codex
+`sandbox_mode = "read-only"`. Omit `tools` to inherit the user's access. A
+persona described as read-only must declare a list without `edit`; see
+[security boundaries](docs/security-boundaries.md) for how strongly each tool
+enforces it.
+
 ## Operating Model
 
 1. A human defines intent, scope, authority, and acceptance criteria.

@@ -1,5 +1,5 @@
 import { basename, join } from 'node:path'
-import { finish, label, parseFrontmatter, root, walk } from './lib.mjs'
+import { finish, label, parseFrontmatter, root, toolAliases, toolList, walk } from './lib.mjs'
 
 const directory = join(root, '.github/agents')
 const files = walk(directory, path => path.endsWith('.md'))
@@ -28,6 +28,19 @@ for (const file of files) {
   for (const section of requiredSections) {
     if (!content.includes(`## ${section}`)) failures.push(`${label(file)}: missing section ${section}`)
   }
+  // A read-only claim must be enforced by tools, and a tool list without edit must be advertised.
+  const tools = toolList(data.tools)
+  const claimsReadOnly = /\bread-only\b/i.test(data.description ?? '')
+  if (tools) {
+    if (!tools.length) failures.push(`${label(file)}: tools must be a one-line list such as ['read', 'search'], or be omitted`)
+    if (new Set(tools).size !== tools.length) failures.push(`${label(file)}: tools contains a duplicate alias`)
+    for (const tool of tools) {
+      if (!toolAliases[tool]) failures.push(`${label(file)}: unsupported tool alias ${tool}; use ${Object.keys(toolAliases).join(', ')}`)
+    }
+  }
+  const readOnly = tools !== null && !tools.includes('edit')
+  if (claimsReadOnly && !readOnly) failures.push(`${label(file)}: read-only persona must declare tools without edit`)
+  if (readOnly && !claimsReadOnly) failures.push(`${label(file)}: persona without edit must say Read-only in its description`)
 }
 
 if (files.length === 0) failures.push('.github/agents: no persona files found')

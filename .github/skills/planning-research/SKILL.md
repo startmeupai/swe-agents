@@ -18,17 +18,45 @@ choose planning mode only when the caller explicitly requests a plan.
 ## Workflow
 
 1. Select read-only research mode or planning mode from the requested outcome.
-2. Separate in-scope, out-of-scope, assumptions, and missing inputs.
-3. Search implementation, tests, configuration, docs, and prior artifacts.
-4. Identify reusable contracts and inspect shared runtime behavior.
-5. Record evidence and risks, including security and deployment effects.
-6. In planning mode only, create stages with one dominant outcome and named
-   specialist owner, then add atomic tasks, dependencies, and separate gates.
+2. Restate the question, then separate in-scope, out-of-scope, assumptions, and
+   missing inputs.
+3. Search implementation, tests, configuration, docs, and prior plans and reports.
+4. Identify reusable contracts and read the implementation of every shared
+   helper the answer or plan depends on; confirm it handles the data shapes in
+   scope.
+5. Confirm runtime prerequisites such as seeded records, configuration, and
+   feature flags; record each missing one as a finding or a plan task.
+6. Record evidence and risks, including security and deployment effects.
+7. In research mode, rank findings on the
+   [finding severity](../../../docs/verification-model.md#finding-severity)
+   scale and report a summary, ranked findings, and limitations.
+8. In planning mode only, write stages in the format below with atomic tasks,
+   dependencies, and separate verification gates.
+
+## Stage Format
+
+```markdown
+## Stage 2: Focused Tests
+
+**Goal:** Prove allowed and denied settings updates at the mutation boundary.
+**Assigned Specialist:** `test-agent`
+**Dependencies:** Stage 1
+**Status:** Pending
+
+- [ ] Add positive and negative integration tests.
+- [ ] Run the focused test command and record its result.
+```
+
+- Give each stage one dominant outcome and the narrowest owning persona. Split
+  a stage that mixes unrelated workstreams.
+- When a coupled stage needs a second specialist, keep one assigned owner and
+  suffix that task with `(Specialist: <persona>)`.
+- Write every task and gate as `- [ ]`; no other status markers.
 
 ## Deterministic Checks
 
-- Confirm every referenced file exists. In planning mode, also confirm every
-  task row uses `- [ ]` or `- [x]`.
+- Confirm every referenced file exists. In planning mode, `pnpm check:plans`
+  validates checkbox syntax, stage fields, and assigned personas.
 
 ## Safety and Permission Boundaries
 
@@ -48,3 +76,4 @@ choose planning mode only when the caller explicitly requests a plan.
 ## Example
 
 `Plan Project Alpha team settings after researching existing RBAC and UI patterns.`
+See the [staged plan example](../../../examples/plans/staged-implementation-plan.md).

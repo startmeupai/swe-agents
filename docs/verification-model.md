@@ -18,3 +18,20 @@ Evidence is layered and non-substitutable.
 Every completion report names which layers ran, the command or observation,
 the result, and what remained unverified. Evidence from another environment or
 an older run is labeled as such.
+
+## Finding Severity
+
+Research, review, and audit reports rank findings on one shared scale.
+
+| Severity | Meaning | Effect |
+| --- | --- | --- |
+| Critical | Exploitable security flaw, data loss, or outage on a reachable path | Blocks readiness and release |
+| High | Wrong behavior for a reachable input, an authorization gap, or a plan defect that would ship it | Blocks plan readiness |
+| Medium | Real defect with limited reach or a workaround, or duplication that will drift | Fix in scope or record as debt |
+| Low | Clarity or maintainability issue with no behavior impact | Optional |
+| Info | Confirmed fact that answers the question; no action implied | None |
+
+Severity ranks findings; it is not a quota. Omit empty levels, and a report
+whose findings share one level is valid. Every finding cites the file, command,
+or observation that confirms it. An inference that could not be confirmed is
+not a finding: list it under the report's limitations with the reason.

@@ -18,13 +18,15 @@ Use for plan critique, simplification, readiness assessment, or an authorized pl
 1. Read the plan end to end and inventory proposed changes.
 2. Cross-reference every new contract, component, store, and workflow.
 3. Find security gaps, duplication, missing ownership, weak evidence, and scope creep.
-4. Rank findings as Critical, High, Medium, or Low.
+4. Rank findings on the
+   [finding severity](../../../docs/verification-model.md#finding-severity) scale.
 5. In update mode, correct authorized findings without inflating scope.
 6. Re-audit and issue a readiness verdict.
 
 ## Deterministic Checks
 
-- Validate paths, checkbox syntax, stage-owner presence, and zero unresolved Critical/High findings.
+- Validate paths and zero unresolved Critical/High findings; `pnpm check:plans`
+  validates checkbox syntax, stage fields, and assigned personas.
 
 ## Safety and Permission Boundaries
 

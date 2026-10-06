@@ -56,6 +56,21 @@ export function parseFrontmatter(path) {
   return { content, data }
 }
 
+// Copilot tool aliases a canonical persona may declare, mapped to Claude Code tools.
+// Any declared list without `edit` makes the persona read-only in every runtime.
+export const toolAliases = {
+  read: ['Read'],
+  search: ['Grep', 'Glob'],
+  execute: ['Bash'],
+  edit: ['Edit', 'Write', 'NotebookEdit'],
+  web: ['WebFetch', 'WebSearch']
+}
+
+export function toolList(value) {
+  if (value === undefined) return null
+  return value.replace(/^\[|\]$/g, '').split(',').map(tool => tool.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean)
+}
+
 export function finish(title, failures, success) {
   if (failures.length > 0) {
     console.error(`${title} failed (${failures.length}):`)

@@ -95,6 +95,7 @@ snapshot. No source file was copied verbatim.
 | `examples/plans/staged-implementation-plan.md` | Planning skill, user brief | Newly created | Fictional entities only |
 | `examples/plans/plan-critic-correction.md` | Plan review skill, user brief | Newly created | Fictional entities only |
 | `examples/plans/stage-end-writeback.md` | Plan operations skill, user brief | Newly created | Fictional entities only |
+| `examples/plans/review-gate-writeback.md` | Plan operations skill, verification model | Newly created | Fictional entities only |
 | `examples/handoffs/implementation-handoff.md` | Plan operations skill, user brief | Newly created | Fictional entities only |
 | `examples/reports/verification-gates.md` | Workshop verification model, user brief | Newly created | No provider or environment identifiers |
 | `examples/reports/rbac-verification.md` | RBAC skill, user brief | Newly created | Fictional profiles and resources only |
@@ -110,6 +111,7 @@ snapshot. No source file was copied verbatim.
 | `scripts/checks/check-sanitization.mjs` | User brief | Updated for public release | Donor terms remain blocked while the public organization identity is allowed |
 | `scripts/checks/check-secrets.mjs` | Secret-audit skill | Condensed | High-confidence patterns; matched values never printed |
 | `scripts/checks/check-artifact-paths.mjs` | Plan/report directory rules | Newly created | Reference-project paths only |
+| `scripts/checks/check-plans.mjs` | Plan operations and planning skills | Newly created | Reference-project plan paths only; stage, checkbox, and gate rules are generic |
 | `scripts/checks/check-browser-evidence.mjs` | Test-and-prove evidence contract | Newly created | Validates local fictional templates and collected artifact integrity |
 | `scripts/checks/check-project-contract.mjs` | Extraction-readiness audit | Updated for public readiness | Validates public toolchain, license, ownership, and line endings |
 | `scripts/checks/check-provenance.mjs` | Extraction-readiness audit | Updated for public release | Prevents provenance from overstating or exposing the private source while requiring license state |

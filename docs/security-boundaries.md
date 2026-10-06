@@ -23,6 +23,10 @@ regex-only filtering.
 - Test both allowed and denied RBAC behavior with the exact intended profiles.
 - Require explicit authority for destructive, external, production, or
   publication actions.
+- Declare a `tools` list without `edit` on every read-only persona. Codex
+  enforces it with a read-only sandbox. Claude Code and Copilot remove their
+  edit tools, but a shell command can still write, so the persona's boundaries
+  remain the control for shell side effects.
 
 Security audits report evidence and limitations; they do not silently change
 authorization policy.
