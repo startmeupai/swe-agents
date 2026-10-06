@@ -45,9 +45,11 @@ lint, typecheck, and test commands.
 
 ## Detection
 
-The manifest's `detect` patterns are `app/**/*.tsx`, `components/**/*.tsx`,
-and `tailwind.config.*`; a repository with a matching file is a candidate for
-this pack.
+The manifest's `detect` patterns are `**/app/**/*.tsx`,
+`**/components/**/*.tsx`, `**/pages/**/*.tsx`, `**/App.tsx`, `vite.config.*`,
+and `**/tailwind.config.*`, so a component tree in a subdirectory such as
+`web/` or `apps/web/` also matches. A repository with a matching file is a
+candidate for this pack; a TypeScript API without components is not.
 
 ## Combining With Other Packs
 
@@ -66,6 +68,13 @@ node scripts/stacks/install.mjs --target ../example-app --packs typescript,web-u
 ```
 
 ## Changelog
+
+### 0.1.1
+
+- Detection now matches component trees outside the repository root, such as
+  `web/App.tsx` in a Vite client or `apps/web/components/`, and
+  `vite.config.*`. Before, only root-level `app/`, `components/`, and
+  `tailwind.config.*` matched, so `init` missed most Vite projects.
 
 ### 0.1.0
 

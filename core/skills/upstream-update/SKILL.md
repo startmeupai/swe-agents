@@ -39,7 +39,9 @@ as `pnpm swe-agents <command> --target <adopting repository>`. Below,
    which conflicts to expect, what is removed or restored, and which pack
    versions change. Point out `restore` for files deleted on purpose and
    `remove` for files the human may still rely on.
-5. Run `swe-agents update` with the same flags once the human accepts the plan.
+5. Run `swe-agents update --yes` with the same flags once the human accepts
+   the plan; an agent has no terminal to confirm in, so without `--yes` the
+   command writes nothing.
    Stop and obtain explicit confirmation before adding `--force`, which
    overwrites every edited and conflicting file and discards their local edits;
    prefer resolving conflicts by hand.
@@ -53,7 +55,8 @@ as `pnpm swe-agents <command> --target <adopting repository>`. Below,
    and a skill twice, so resolve every conflicting copy. Edit the installed
    file to carry the upstream change while keeping the local intent; drop a
    local edit only when upstream now covers it, and say so.
-7. Re-run `swe-agents update`. Each resolved file reports `merge` or
+7. Re-run `swe-agents update --dry-run`, then `swe-agents update --yes`. Each
+   resolved file reports `merge` or
    `unchanged`. Repeat step 6 for anything still in conflict, or leave it
    recorded as deferred with the human's agreement.
 8. Settle the remaining skips. For `skip-unowned`, rename the local file or,

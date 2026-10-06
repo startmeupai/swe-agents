@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, realpathSync, statSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
-import { createInterface } from 'node:readline/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { SourceError, findCheckout, findLayoutRoot, resolveSource } from './source.mjs'
 
@@ -18,8 +17,8 @@ const usage = `Usage: swe-agents <command> [options]
 
   swe-agents init       [--target <dir>] [--packs a,b | --profile <name>] [--yes] [--dry-run] [--ref <git-ref>]
   swe-agents detect     [--target <dir>] [--json]
-  swe-agents install    --target <dir> (--profile <name> | --packs a,b) [--dry-run] [--force]
-  swe-agents update     [--target <dir>] [--dry-run] [--force] [--no-merge] [--ref <git-ref>]
+  swe-agents install    --target <dir> (--profile <name> | --packs a,b) [--yes] [--dry-run] [--force]
+  swe-agents update     [--target <dir>] [--yes] [--dry-run] [--force] [--no-merge] [--ref <git-ref>]
   swe-agents contribute [--target <dir>] [--slug <name>] [--base <branch>] [--apply] [--dry-run]
   swe-agents --help | --version
 
@@ -27,10 +26,15 @@ Commands:
   init        Detect packs, show the suggestion and the plan, confirm, install,
               and print next steps.
   detect      List the packs whose detect patterns match the target.
-  install     Install a profile or pack list (same as scripts/stacks/install.mjs).
-  update      Reinstall the locked profile or pack list from the lock's source
-              and ref, three-way merging files edited since the last install.
+  install     Show the plan for a profile or pack list, confirm, and install
+              (same as scripts/stacks/install.mjs).
+  update      Show the plan to reinstall the locked profile or pack list from
+              the lock's source and ref, three-way merging files edited since
+              the last install, confirm, and apply.
   contribute  Bundle local persona and skill improvements for upstream review.
+
+init, install, and update never write before showing the plan. They ask y/N on
+a terminal; without one they write nothing unless --yes is passed.
 
 Options:
   --target <dir>     Adopting repository. Defaults to the current directory
@@ -38,7 +42,7 @@ Options:
   --profile <name>   Install profiles/<name>.json; init skips detection.
   --packs a,b        Install these packs and the packs they require; init
                      skips detection.
-  --yes              init: install without asking.
+  --yes              init, install, update: apply the plan without asking.
   --dry-run          Print the plan; write nothing.
   --force            install, update: overwrite edited, unowned, and
                      conflicting files; remove edited files no longer installed.
@@ -61,8 +65,8 @@ Exit codes: 0 success, 1 error, 2 a human decision is needed or nothing was done
 const commands = {
   init: { values: ['target', 'packs', 'profile', 'ref'], flags: ['yes', 'dry-run'] },
   detect: { values: ['target'], flags: ['json'] },
-  install: { values: ['target', 'packs', 'profile'], flags: ['dry-run', 'force'] },
-  update: { values: ['target', 'ref'], flags: ['dry-run', 'force', 'no-merge'] },
+  install: { values: ['target', 'packs', 'profile'], flags: ['yes', 'dry-run', 'force'] },
+  update: { values: ['target', 'ref'], flags: ['yes', 'dry-run', 'force', 'no-merge'] },
   contribute: { values: ['target', 'slug', 'base'], flags: ['apply', 'dry-run'] }
 }
 
@@ -217,19 +221,15 @@ async function runDetect(options) {
 // ---------------------------------------------------------------------------
 // init
 
-// y/N prompt; end of input or an interrupt counts as no.
-async function confirm(question) {
-  const prompt = createInterface({ input: process.stdin, output: process.stdout })
-  const closed = new Promise(resolveClosed => prompt.once('close', () => resolveClosed('')))
-  try {
-    const answer = await Promise.race([prompt.question(question), closed])
-    return /^y(?:es)?$/i.test(String(answer).trim())
-  } catch (error) {
-    if (error?.code === 'ABORT_ERR') return false
-    throw error
-  } finally {
-    prompt.close()
+// The preview-and-confirm API every writing command uses; a source checkout
+// older than it cannot be driven by this CLI.
+function previewApi(installer, source) {
+  for (const name of ['confirmPlan', 'reportNotices', 'reportResult', 'terminalConfirm']) {
+    if (typeof installer[name] !== 'function') {
+      throw new SourceError(`${source.dir} at ${source.ref} predates preview-before-apply in the installer. Use a newer --ref.`)
+    }
   }
+  return installer
 }
 
 function nextSteps(plan, label) {
@@ -254,7 +254,8 @@ async function runInit(options) {
   const { target, label } = resolveTarget(options)
   const source = resolveSource({ ref: options.ref ?? null, forUpdate: true })
   printNotes(source)
-  const { installer, detect, lib } = await sourceModules(source)
+  const { installer: modules, detect, lib } = await sourceModules(source)
+  const installer = previewApi(modules, source)
   let selection
   if (options.profile) selection = { profile: options.profile }
   else if (options.packs) selection = { packs: splitPacks(options.packs) }
@@ -269,24 +270,17 @@ async function runInit(options) {
     console.log(`Note: ${label} already has ${lockFile}. init reinstalls this selection without merging; swe-agents update merges local edits.\n`)
   }
   const plan = installer.planInstall({ target, ...selection, source })
-  const preview = options.dryRun || !options.yes
-  installer.reportPlan(plan, { command: 'init', dryRun: options.dryRun, targetLabel: label })
-  if (options.dryRun) {
-    installer.reportOutcome(plan, { command: 'init', dryRun: true, routing: false })
+  const dryRun = Boolean(options.dryRun)
+  installer.reportPlan(plan, { command: 'init', dryRun, targetLabel: label })
+  installer.reportNotices(plan, { command: 'init' })
+  const apply = await installer.confirmPlan(plan, { dryRun, yes: Boolean(options.yes), confirm: installer.terminalConfirm(), targetLabel: label })
+  if (dryRun) {
+    installer.reportResult(plan, { dryRun: true, routing: false })
     return 0
   }
-  if (preview) {
-    if (!process.stdin.isTTY || !process.stdout.isTTY) {
-      console.log('\nNothing written: no terminal to confirm in. Review the plan above, then rerun with --yes to install.')
-      return 2
-    }
-    if (!(await confirm(`\nInstall ${installer.changeCount(plan)} change(s) into ${label}? [y/N] `))) {
-      console.log('Nothing written.')
-      return 2
-    }
-  }
+  if (!apply) return 2
   installer.applyPlan(plan)
-  installer.reportOutcome(plan, { command: 'init', dryRun: false })
+  installer.reportResult(plan, { dryRun: false })
   nextSteps(plan, label)
   return 0
 }
@@ -299,7 +293,7 @@ async function runInstallCommand(options) {
   if (!options.profile && !options.packs) throw new UsageError('Use exactly one of --profile or --packs')
   const source = resolveSource({ forUpdate: false })
   printNotes(source)
-  const { installer } = await sourceModules(source)
+  const installer = previewApi((await sourceModules(source)).installer, source)
   return installer.runInstall({
     target,
     targetLabel: label,
@@ -307,6 +301,8 @@ async function runInstallCommand(options) {
     packs: options.packs ? splitPacks(options.packs) : null,
     force: Boolean(options.force),
     dryRun: Boolean(options.dryRun),
+    yes: Boolean(options.yes),
+    confirm: installer.terminalConfirm(),
     source
   })
 }
@@ -327,14 +323,16 @@ async function runUpdateCommand(options) {
   const locked = lockedSource(target)
   const source = resolveSource({ ref: options.ref ?? locked.ref, forUpdate: true, repo: locked.repo })
   printNotes(source)
-  const { installer } = await sourceModules(source)
+  const installer = previewApi((await sourceModules(source)).installer, source)
   return installer.runUpdate({
     target,
     targetLabel: label,
     source,
     force: Boolean(options.force),
     merge: !options.noMerge,
-    dryRun: Boolean(options.dryRun)
+    dryRun: Boolean(options.dryRun),
+    yes: Boolean(options.yes),
+    confirm: installer.terminalConfirm()
   })
 }
 
