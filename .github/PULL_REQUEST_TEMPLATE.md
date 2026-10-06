@@ -2,6 +2,8 @@
 
 <!-- Explain the problem and the focused change that solves it. -->
 
+Origin: <!-- fork | adopter repository (sanitized) -->
+
 Pack(s) affected: <!-- name each stack pack, or write "none" -->
 
 ## Verification
@@ -19,6 +21,7 @@ Pack(s) affected: <!-- name each stack pack, or write "none" -->
 
 ## Safety and Scope
 
+- [ ] The pull request targets the `test` branch
 - [ ] No credentials, customer data, private domains, or proprietary code were
       added
 - [ ] The change is portable and does not assume a specific product repository

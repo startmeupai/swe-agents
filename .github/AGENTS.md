@@ -21,6 +21,7 @@ Sources: [`core/agents/`](../core/agents/).
 - `github-actions-agent`: secure, reproducible CI workflows.
 - `security-auditor-agent`: read-only, ranked security findings.
 - `subagents-validator-agent`: agent-system consistency audit.
+- `upstream-agent`: upstream updates and sanitized contributions back to the source.
 
 ## TypeScript Pack
 

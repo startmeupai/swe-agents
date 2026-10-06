@@ -94,8 +94,8 @@ The installer turns `AGENTS.md` into one section of the target's `AGENTS.md`:
   any link target the target does not have.
 
 Start with one sentence of scope, such as "Apply these rules to Python modules,
-`pyproject.toml`, and tests." Keep the fragment short; every client loads
-`AGENTS.md` on every task, and procedures belong in skills.
+`pyproject.toml`, and tests." Keep the fragment short; every client that reads
+`AGENTS.md` loads it on every task, and procedures belong in skills.
 
 ## Personas
 
@@ -119,11 +119,13 @@ skills:
 
 `pnpm check:agents` enforces these rules:
 
-- Frontmatter holds only `name`, `description`, `tools`, and `skills`. There is
-  no `model` field; models inherit from the user's client.
-- `tools` is optional; omitting it grants every tool. When present, it lists
-  Claude Code tool names only: `Read`, `Grep`, `Glob`, `Bash`, `Edit`, `Write`,
-  `NotebookEdit`, `WebFetch`, `WebSearch`, and `Agent`, with no duplicates.
+- Frontmatter holds only `name`, `description`, `tools`, and `skills`. Personas
+  omit `model`, so the client chooses; Claude Code then uses the per-invocation
+  model, `CLAUDE_CODE_SUBAGENT_MODEL`, or the main conversation's model.
+- `tools` is optional; omitting it inherits every tool available to subagents.
+  When present, it lists Claude Code tool names only: `Read`, `Grep`, `Glob`,
+  `Bash`, `Edit`, `Write`, `NotebookEdit`, `WebFetch`, `WebSearch`, and
+  `Agent`, with no duplicates.
 - The description contains "Read-only" if, and only if, `tools` is declared
   without `Edit`, `Write`, and `NotebookEdit`.
 - `skills` is a YAML block list with at least one name. Each name is a core
@@ -227,7 +229,9 @@ selection prints `Result: no changes`.
 | `update` | The file matches the lock, and the sources changed |
 | `unchanged` | The file already has the expected content |
 | `restore` | The lock lists the file, but it was deleted |
-| `skip-edited` | The file changed since the last install; kept |
+| `merge` | `update` only: the file was edited locally and the upstream change merged cleanly |
+| `skip-conflict` | `update` only: the local edit and the upstream change overlap; kept, resolve by hand |
+| `skip-edited` | The file changed since the last install; kept (`install`, or `update --no-merge`) |
 | `skip-unowned` | The file exists, but the installer did not create it; kept |
 | `overwrite` | A skipped case replaced because `--force` was set |
 | `append-block` | An existing `AGENTS.md` received the managed block |
@@ -244,7 +248,7 @@ selection prints `Result: no changes`.
 | `.claude/agents/<name>.md` | Each persona, as authored |
 | `.github/agents/<name>.agent.md` | Each persona without its `skills` block |
 | `.codex/agents/<name>.toml` | Each persona for Codex; `sandbox_mode = "read-only"` when it cannot edit |
-| `.codex/config.toml` | Enables Codex custom agents |
+| `.codex/config.toml` | Sets `[agents] enabled = true`, Codex's default for multi-agent tools |
 | `.agents/skills/<name>/` | Each skill folder |
 | `.claude/skills/<name>/` | A copy of each skill folder; no symlinks |
 | `.github/copilot-instructions.md` | A pointer to `AGENTS.md`, created only when absent and never tracked |
@@ -268,20 +272,35 @@ The installer owns only the text between `<!-- swe-agents:begin -->` and
 
 ```json
 {
-  "source": { "repo": "swe-agents", "commit": "<40-character commit, or null>" },
+  "lockVersion": 2,
+  "source": {
+    "repo": "https://github.com/startmeupai/swe-agents",
+    "ref": "main",
+    "commit": "<40-character commit>"
+  },
   "profile": "python-api-docker",
   "packs": [
     { "name": "python", "version": "0.1.0" },
     { "name": "docker", "version": "0.1.0" }
   ],
-  "files": { "AGENTS.md": "<sha256>", ".claude/agents/python-test-agent.md": "<sha256>" }
+  "files": { "AGENTS.md": "<sha256>", ".claude/agents/python-test-agent.md": "<sha256>" },
+  "origins": { ".claude/agents/python-test-agent.md": "stacks/python/agents/python-test-agent.md" }
 }
 ```
 
-- `source.commit` is this repository's `HEAD`, or `null` when the source is not
-  a Git checkout. It does not capture uncommitted source changes.
+- `source` records the repository, ref, and commit the files came from. The
+  installer refuses to write a lock without a real commit, and the commit does
+  not capture uncommitted source changes.
 - `profile` is `null` for a `--packs` install, and `packs` lists the resolved
   packs, required ones included, in installation order.
+- `origins` maps each installed file to its canonical path in this repository.
+  `update` uses it to find the merge base and `contribute` uses it to aim a
+  patch at the right file. Composed files such as `AGENTS.md` and the Codex
+  files have no origin. A `bases` field appears only while an edited file waits
+  on an older merge base after a skipped conflict.
+- An older lock without `lockVersion` is read as version 1. Its files cannot
+  be merged until one install rewrites the lock; `contribute` derives their
+  origins by rendering the recorded commit.
 - Each hash is the SHA-256 of the file with LF line endings, so a CRLF checkout
   does not look edited. The `AGENTS.md` hash covers the managed block, markers
   included.
@@ -291,13 +310,22 @@ The installer owns only the text between `<!-- swe-agents:begin -->` and
 
 ## Update Flow
 
-1. Pull a newer checkout of this repository.
-2. Rerun the same install command with `--dry-run` and read the plan.
-3. Run it without `--dry-run`. Unedited files and the managed block are
-   refreshed, and the lock is rewritten.
-4. For each skipped file, compare it with the new version, then either keep it
-   or rerun with `--force` and reapply the local change.
-5. Commit the target's changes, including the lock file.
+From the target repository, `swe-agents update` (run as
+`npx --yes github:startmeupai/swe-agents update`, or `pnpm swe-agents update
+--target ../my-repo` from a clone) re-installs the locked selection from the
+newest source and three-way merges local edits:
+
+1. Run `swe-agents update --dry-run` and read the plan.
+2. Run `swe-agents update`. Unedited files and the managed block are
+   refreshed. An edited file is merged against its recorded base and reports
+   `merge`; an overlapping edit reports `skip-conflict` and is left untouched.
+3. Resolve each `skip-conflict` by hand from the printed hunks, then rerun
+   `update`. `--no-merge` restores the older `skip-edited` behaviour and
+   `--force` overwrites every edited file.
+4. Commit the target's changes, including the lock file.
+
+The `upstream-agent` persona, installed with the core, drives this flow and the
+contribution flow described in [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 To drop a pack, rerun with the smaller selection. Unedited files that only the
 dropped pack installed are removed; edited ones are left in place and become

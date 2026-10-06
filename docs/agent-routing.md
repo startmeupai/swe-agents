@@ -23,6 +23,8 @@ record the missing specialist as a limitation.
 | Own CI workflow behavior | `github-actions-agent` | `github-actions` |
 | Produce read-only security findings | `security-auditor-agent` | `access-control-audit`, `ai-injection-audit`, `upload-ssrf-audit`, `secret-leak-audit`, `dependency-cve-audit` |
 | Validate the agent system itself | `subagents-validator-agent` | `subagents-validation` |
+| Pull upstream agent-system updates | `upstream-agent` | `upstream-update` |
+| Contribute agent-system changes upstream | `upstream-agent` | `upstream-contribution` |
 
 When a language pack is installed, prefer its feature and test owners for work
 inside that language. Keep `feature-agent` and `test-agent` for work that spans

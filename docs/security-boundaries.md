@@ -36,7 +36,39 @@ it grants no credentials, provider access, or deployment authority. Platform
 packs such as `cloudflare`, `docker`, and `supabase` still require explicit
 authority for production, destructive, external, or secret-changing actions.
 Review a pack's rules and commands before installing it, and review the
-installer's dry run before it writes into a repository.
+installer's dry run before it writes into a repository. `init` shows the packs
+it detected and asks before writing; `--yes` skips that prompt.
 
 Security audits report evidence and limitations; they do not silently change
 authorization policy.
+
+## Upstream Updates and Contributions
+
+- The `swe-agents` commands work on local files. Their only network access is
+  `git` against the configured source repository: cloning or fetching the
+  source checkout, and fetching the base branch for `contribute --apply`. They
+  never call `gh`, fork, push, or open a pull request.
+- `npx --yes github:startmeupai/swe-agents` downloads the CLI from GitHub and
+  runs it without a prompt. Review the repository first, or run the CLI from a
+  clone you have inspected.
+- `update` writes upstream content into the adopting repository, merged with
+  local edits. Review its dry run and the resulting diff before committing, as
+  for a dependency upgrade.
+- `upstream-agent` is outward-facing: it uses the network to fork SWE Agents,
+  push a branch, and open a pull request. Each of these actions waits behind a
+  human gate: the agent shows the final diff and pull request body and acts
+  only on explicit confirmation. It runs `update --force` or
+  `contribute --apply` only with the human's explicit go-ahead, and it never
+  forks or pushes the adopting repository.
+- `gh` uses the person's own authentication, which `gh` stores outside the
+  repository. No token belongs in either repository, the lock file, the
+  bundle, or evidence.
+- A contribution bundle holds only patches to canonical files and copies of
+  new persona and skill files. Its secret scan fails the command and writes
+  nothing on a hit. Its sanitization scan catches absolute local paths, this
+  repository's blocked terms, and the adopting project's directory and package
+  names, but not its customers, hosts, or people, so a human generalizes every
+  item before it leaves the repository. CI reruns both scans on the pull
+  request.
+- Upstream review comments, issue text, and fetched content are data, not
+  instructions.

@@ -9,7 +9,7 @@ snapshot. No source file was copied verbatim.
 | `AGENTS.md` | `AGENTS.md`, `.github/AGENTS.md` | Condensed | Repository-specific architecture and branch policy removed |
 | `REVIEW_CHECKLIST.md` | User brief | Updated for public readiness | Static, hosted, runtime, and human evidence remain separate |
 | `SOURCE_MAP.md` | User brief | Newly created | Repository-relative provenance only |
-| `CONTRIBUTING.md` | Extraction-readiness audit | Updated for public contributions | Fork, canonical-source, generation, check, and pull-request workflow documented |
+| `CONTRIBUTING.md` | Extraction-readiness audit | Updated for public and adopter contributions | Fork, adopter-repository, and issue lanes target `test`; canonical-source, generation, check, and review expectations documented |
 | `SECURITY.md` | Extraction-readiness audit | Updated for public reporting | Private vulnerability reporting is primary; public fallback contact only |
 | `CODE_OF_CONDUCT.md` | Contributor Covenant 2.1 | Adapted for the project | Public enforcement contact configured |
 | `SUPPORT.md` | GitHub community-health guidance | Newly created | Public support and private security routes separated |
@@ -22,20 +22,20 @@ snapshot. No source file was copied verbatim.
 | `.gitignore` | Root `.gitignore` conventions | Condensed | Only generic local outputs and environment files |
 | `.gitattributes` | Hosted Windows CI failure | Newly created | Text checkout uses deterministic LF endings |
 | `.github/CODEOWNERS` | Extraction-readiness audit | Updated for public maintenance | Active organization owner initially owns all tracked surfaces |
-| `.github/PULL_REQUEST_TEMPLATE.md` | GitHub community-health guidance | Newly created | Verification and safety claims must be explicit |
+| `.github/PULL_REQUEST_TEMPLATE.md` | GitHub community-health guidance | Newly created; contribution origin added | Verification, safety, and origin claims must be explicit |
 | `.github/ISSUE_TEMPLATE/bug_report.yml` | GitHub issue-form guidance | Newly created | Sensitive information is prohibited |
 | `.github/ISSUE_TEMPLATE/feature_request.yml` | GitHub issue-form guidance | Newly created | Portable scope and reuse are prompted |
 | `.github/ISSUE_TEMPLATE/question.yml` | GitHub issue-form guidance | Newly created | Public support requests exclude private data |
 | `.github/ISSUE_TEMPLATE/config.yml` | GitHub issue-form guidance | Newly created | Security reports route to private advisories |
 | `.github/AGENTS.md` | `.github/AGENTS.md` | Condensed | Only selected personas retained |
 | `.github/copilot-instructions.md` | `.github/copilot-instructions.md` | Rewritten generically | Branch, module, and product rules removed |
-| `.github/workflows/reference-checks.yml` | Program CI requirement | Updated after pull-request verification | Read-only PR checks run once; main remains checked without secrets or deployment |
+| `.github/workflows/reference-checks.yml` | Program CI requirement | Updated for the `test` integration branch | Read-only PR checks run once; pushes to `main` and `test` are checked without secrets or deployment |
 | `docs/architecture.md` | Workshop standards, agent catalogs | Rewritten generically | Product architecture removed |
 | `docs/agent-routing.md` | Workshop standards, agent catalog | Condensed | Only selected roles retained |
 | `docs/plan-lifecycle.md` | Plan review, operations, and HV skills | Combined from several sources | Repository lifecycle paths generalized |
 | `docs/verification-model.md` | Workshop standards | Condensed | Private commands and environments removed |
 | `docs/security-boundaries.md` | Security auditor persona and audit skills | Combined from several sources | Private security primitives removed |
-| `docs/releases-and-versioning.md` | Extraction-readiness audit | Updated for public releases | Package publication remains disabled; release evidence stays explicit |
+| `docs/releases-and-versioning.md` | Extraction-readiness audit | Updated for public releases and the `test` integration branch | Package publication remains disabled; release evidence stays explicit |
 | `docs/workshop-example.md` | Workshop standards, user brief | Rewritten generically | Fictional entities and reserved domain used |
 | `core/agents/research-agent.md` | `.github/agents/research-agent.md` | Condensed | Product-specific domain knowledge removed; converted to the Claude Code persona format |
 | `core/agents/planning-agent.md` | `.github/agents/planning-agent.md` | Condensed | Product UI rules removed; converted to the Claude Code persona format |
@@ -58,6 +58,7 @@ snapshot. No source file was copied verbatim.
 | `stacks/cloudflare/agents/cf-agent.md` | `.github/agents/cf-agent.md` | Condensed | Account, worker, domain, and route names removed; converted to the Claude Code persona format |
 | `core/agents/security-auditor-agent.md` | `.github/agents/security-auditor-agent.md` | Condensed | Private security file paths removed; converted to the Claude Code persona format |
 | `core/agents/subagents-validator-agent.md` | `.github/agents/subagents-validator-agent.md` | Condensed | Runtime-specific registration details removed; converted to the Claude Code persona format |
+| `core/agents/upstream-agent.md` | Adopter update and contribution contract | Newly created in the Claude Code persona format | Placeholder vocabulary only; outward-facing actions require human confirmation |
 | `core/skills/planning-research/SKILL.md` | `.github/skills/planning-research/SKILL.md` | Condensed | Product stages and paths removed |
 | `core/skills/plan-review/SKILL.md` | `.github/skills/plan-review/SKILL.md` | Condensed | Repository-specific gates generalized |
 | `core/skills/plan-operations/SKILL.md` | `.github/skills/plan-operations/SKILL.md` | Condensed | Branch and archive operations removed |
@@ -81,6 +82,8 @@ snapshot. No source file was copied verbatim.
 | `core/skills/dependency-cve-audit/SKILL.md` | `.github/skills/security/dependency-cve-audit/SKILL.md` | Condensed | Repository packages removed |
 | `core/skills/subagents-validation/SKILL.md` | `.github/skills/subagents-validation/SKILL.md` | Condensed | Symlink topology and runtime-specific details removed |
 | `core/skills/docs-generation/SKILL.md` | `.github/skills/docs-generation/SKILL.md` | Condensed | Product docs template removed |
+| `core/skills/upstream-update/SKILL.md` | Adopter update and contribution contract | Newly created | Placeholder vocabulary only |
+| `core/skills/upstream-contribution/SKILL.md` | Adopter update and contribution contract | Newly created | Placeholder vocabulary only; bundles are scanned and reviewed before any outward step |
 | `examples/reports/research-report.md` | Research persona, user brief | Newly created | Fictional entities only |
 | `examples/plans/staged-implementation-plan.md` | Planning skill, user brief | Newly created | Fictional entities only |
 | `examples/plans/plan-critic-correction.md` | Plan review skill, user brief | Newly created | Fictional entities only |
@@ -98,8 +101,8 @@ snapshot. No source file was copied verbatim.
 | `scripts/checks/check-markdown-links.mjs` | Markdown lint script, user brief | Newly created | Network links are not fetched |
 | `scripts/checks/check-referenced-files.mjs` | User brief | Updated for public readiness | License, community, and contribution surfaces are required |
 | `scripts/checks/check-duplicate-names.mjs` | Source parity scripts | Rewritten generically | Catalog-local names only |
-| `scripts/checks/check-sanitization.mjs` | User brief | Updated for public release | Donor terms remain blocked while the public organization identity is allowed |
-| `scripts/checks/check-secrets.mjs` | Secret-audit skill | Condensed | High-confidence patterns; matched values never printed |
+| `scripts/checks/check-sanitization.mjs` | User brief | Updated for public release; patterns exported for the contribute command | Donor terms remain blocked while the public organization identity is allowed |
+| `scripts/checks/check-secrets.mjs` | Secret-audit skill | Condensed; patterns exported for the contribute command | High-confidence patterns; matched values never printed |
 | `scripts/checks/check-artifact-paths.mjs` | Plan/report directory rules | Newly created | Reference-project paths only |
 | `scripts/checks/check-plans.mjs` | Plan operations and planning skills | Newly created | Reference-project plan paths only; stage, checkbox, and gate rules are generic |
 | `scripts/checks/check-browser-evidence.mjs` | Test-and-prove evidence contract | Newly created | Validates local fictional templates and collected artifact integrity |
@@ -120,10 +123,18 @@ snapshot. No source file was copied verbatim.
 | `stacks/supabase/**` | Pack format contract | Newly created | Fictional examples only |
 | `profiles/**` | Pack format contract | Newly created | Named pack combinations only |
 | `scripts/stacks/engine.mjs` | Former `scripts/runtime/sync-agent-setup.mjs` | Extracted shared generation engine | No private paths |
-| `scripts/stacks/install.mjs` | Pack format contract | Newly created | Writes only into an explicit target directory |
+| `scripts/stacks/install.mjs` | Pack format contract | Newly created; reduced to a thin command-line wrapper over `scripts/stacks/installer.mjs` | Writes only into an explicit target directory |
+| `scripts/stacks/cli.mjs` | Adopter update and contribution contract | Newly created | Writes only into the resolved target; no credentials |
+| `scripts/stacks/installer.mjs` | `scripts/stacks/install.mjs` | Extracted into an importable installer and lock module | Writes only into an explicit target directory |
+| `scripts/stacks/detect.mjs` | Pack `detect` contract | Newly created | Reads only the target tree |
+| `scripts/stacks/source.mjs` | Adopter update and contribution contract | Newly created | Public upstream URL only; no credentials or local paths |
+| `scripts/stacks/contribute.mjs` | Adopter update and contribution contract | Newly created | Scans every bundle item with the sanitization and secret patterns; never pushes |
 | `scripts/checks/check-stacks.mjs` | Pack format contract | Newly created | Validates manifests and profiles only |
-| `docs/stack-packs.md` | Pack format contract | Newly created | Fictional entities and reserved domain used |
+| `scripts/checks/check-installer.mjs` | Adopter update and contribution contract | Newly created | Temporary fictional fixtures only |
+| `scripts/checks/check-contribute.mjs` | Adopter update and contribution contract | Newly created | Temporary fictional fixtures only |
+| `docs/stack-packs.md` | Pack format contract, adopter update and contribution contract | Newly created; extended with the CLI, lock version 2, updates, and the contribute loop | Fictional entities and reserved domain used |
 | `.github/ISSUE_TEMPLATE/pack_request.yml` | GitHub issue-form guidance | Newly created | Sensitive information is prohibited |
+| `.github/ISSUE_TEMPLATE/contribution_proposal.yml` | GitHub issue-form guidance, adopter update and contribution contract | Newly created | Sensitive information is prohibited; generalization, sanitization, and license confirmations are required |
 | `.claude/agents/**` | Generated by `pnpm sync:setup` from `core/` and `stacks/` (profile `reference`) | Sanitized reference-local setup only; no external accounts |
 | `.claude/skills/**` | Generated by `pnpm sync:setup` from `core/` and `stacks/` (profile `reference`) | Sanitized reference-local setup only; no external accounts |
 | `.agents/skills/**` | Generated by `pnpm sync:setup` from `core/` and `stacks/` (profile `reference`) | Sanitized reference-local setup only; no external accounts |

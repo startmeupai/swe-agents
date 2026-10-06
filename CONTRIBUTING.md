@@ -22,17 +22,83 @@ By submitting a contribution, you agree that it is licensed under the
 
 ## Contribution Workflow
 
+Every pull request targets the `test` integration branch, never `main`.
+Maintainers promote `test` to `main` by pull request for each release; see
+[releases and versioning](docs/releases-and-versioning.md). Choose the lane
+that fits.
+
+| Lane | Use it when | Push vehicle |
+| --- | --- | --- |
+| Fork and pull request | You change SWE Agents directly | Your fork |
+| From your adopting repository | You improved an installed persona or skill, or wrote a new one, in a repository that installed SWE Agents | A fork of SWE Agents that `gh` creates on demand |
+| Issue with a bundle | You cannot push a branch anywhere | None; a maintainer carries the change |
+
+### Fork and Pull Request
+
 1. Fork the repository.
-2. Create a focused branch such as `feat/add-agent` or `fix/windows-parity`.
+2. Create a focused branch from `test`, such as `feat/add-agent` or
+   `fix/windows-parity`.
 3. Make the smallest coherent change that solves the issue.
 4. Update tests, checks, examples, and documentation that define the same
    contract.
 5. Run the required commands below.
-6. Open a pull request using the repository template.
+6. Open a pull request against `test` using the repository template, with
+   `Origin: fork`.
 7. Address CI and maintainer feedback.
 
-Maintainers normally squash-merge accepted pull requests. Contributors do not
-need organization membership or direct write access.
+### From Your Adopting Repository
+
+The `upstream-agent` persona, installed with the core, runs this lane with the
+`upstream-contribution` skill. You can also run each step yourself.
+`swe-agents` means `npx --yes github:startmeupai/swe-agents` from your
+repository, or `pnpm swe-agents` with `--target <dir>` from a clone.
+
+1. Run `swe-agents contribute --dry-run` in your repository and review the
+   items: edits to installed files, and new personas or skills that the lock
+   does not list. Edits to the `AGENTS.md` managed block are not bundled;
+   carry a rule change to `core/AGENTS.md` or the pack's `AGENTS.md` by hand.
+2. Run `swe-agents contribute` to write the bundle to
+   `.agents/contributions/<slug>/`, and review its `SUMMARY.md`, every patch,
+   and every copied file. Plan how to generalize each item to the placeholder
+   vocabulary and which project-specific commands, paths, and names to drop.
+3. Run `swe-agents contribute --apply`. In the source checkout, which is your
+   clone or the cached clone in `$SWE_AGENTS_HOME/source`, it creates a
+   `contrib/<slug>` branch from `test` on the `upstream` remote, or on
+   `origin` when there is no `upstream`. It refuses when the checkout has
+   uncommitted changes or the branch exists, stages each patched canonical
+   file, copies new files untracked, and never pushes.
+4. On that branch, generalize every item, decide where each new persona or
+   skill belongs, bump each changed pack's version and changelog, then run
+   `pnpm sync:setup` and `pnpm check:all` and commit.
+5. Review the final diff and pull request body. Only after you confirm does
+   `upstream-agent` run the outward-facing steps below with your own `gh`
+   login.
+
+```bash
+gh repo fork startmeupai/swe-agents --remote=false   # only when you cannot push upstream
+git push https://github.com/<owner>/swe-agents.git contrib/<slug>
+gh pr create --repo startmeupai/swe-agents --base test --head <owner>:contrib/<slug>
+```
+
+After the pull request exists, delete `.agents/contributions/<slug>/` from your
+repository.
+
+Outside contributors still need a fork of SWE Agents as the push vehicle; `gh`
+creates it under your account the first time. Your own project is never
+forked, pushed, or uploaded: only the reviewed patches and new files leave it.
+
+### Issue With a Bundle
+
+When you cannot push a branch anywhere, run `swe-agents contribute` and open a
+[contribution proposal](https://github.com/startmeupai/swe-agents/issues/new?template=contribution_proposal.yml).
+Paste the bundle's `SUMMARY.md` and attach its `patches/` and `files/`
+directories as a zip. A maintainer reviews the proposal against the same
+expectations as a pull request and may carry it into one.
+
+### Merging
+
+Maintainers normally squash-merge accepted pull requests into `test`.
+Contributors do not need organization membership or direct write access.
 
 ## Local Setup
 
@@ -95,6 +161,32 @@ requires. See [stack packs](docs/stack-packs.md) for the full contract.
 9. Add a [`SOURCE_MAP.md`](SOURCE_MAP.md) row covering `stacks/<pack>/**`.
 10. Run `pnpm check:stacks`, `pnpm sync:setup`, and `pnpm check:all`.
 
+## Review Expectations for Adopter Contributions
+
+A change that starts in an adopting repository is reviewed like any other pull
+request, with these additions:
+
+- **Generalized.** It reads as if written for this reference. `ExampleApp`,
+  `Project Alpha`, and `example.invalid` replace real names, and
+  project-specific commands, paths, hosts, and conventions are removed or
+  expressed through the installed packs' commands. A rule that helps only one
+  project belongs in that project's `AGENTS.md`, outside the managed block.
+- **Sanitized again.** The bundle's scans catch credential patterns, absolute
+  local paths, this repository's blocked terms, and your project's directory
+  and package names; they cannot know your customers, hosts, or people. CI
+  reruns the sanitization and secret checks in `pnpm check:all` on every pull
+  request, and a reviewer still reads every line.
+- **Placed.** Each new persona or skill marked `needs-decision` states whether
+  it belongs in the core or a pack, and why. Core files must not name a pack.
+- **Versioned.** Each changed pack has a version bump and a changelog entry. A
+  core-only change needs no pack bump; it ships in the next repository
+  release.
+- **Complete.** The pull request includes the regenerated runtime files, the
+  catalog and routing updates for a new persona, `SOURCE_MAP.md` rows, and a
+  passing `pnpm check:all`.
+- **Labeled.** The pull request body says `Origin: adopter repository (sanitized)`
+  and names the affected packs.
+
 ## Change Requirements
 
 - Keep the project generic and reference-only; do not add product code.
@@ -116,9 +208,9 @@ requires. See [stack packs](docs/stack-packs.md) for the full contract.
 
 ## Pull Request Expectations
 
-A useful pull request has one clear purpose, explains the motivation and user
-impact, lists the checks that actually ran, and calls out anything that remains
-unverified. Screenshots are useful only when the change has a visual effect.
+A useful pull request targets `test`, has one clear purpose, explains the
+motivation and user impact, lists the checks that actually ran, and calls out
+anything that remains unverified. Screenshots are useful only when the change has a visual effect.
 
 The maintainers in [`.github/CODEOWNERS`](.github/CODEOWNERS) review changes.
 Repository roles are granted gradually based on sustained, constructive
