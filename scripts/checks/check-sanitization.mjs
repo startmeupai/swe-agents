@@ -4,7 +4,14 @@ import { finish, label, read, root, symbolicLinks, walk } from './lib.mjs'
 const ownFile = 'check-sanitization.mjs'
 const files = walk(root, path => basename(path) !== ownFile)
 const failures = []
+// Exact public identifiers that may contain a forbidden term. Everything else
+// that contains the term, such as a private host or repository path, still fails.
+const publicIdentity = [
+  [['start', 'meup', 'ai'].join(''), 'swe-agents'].join('/'),
+  ['contact', ['start', 'meup', '.ai'].join('')].join('@')
+]
 const forbiddenTerms = [
+  ['start', 'meup'].join(''),
   ['byblos', 'ai'].join(''),
   ['smu', 'ai'].join(''),
   ['ced', 'ra'].join(''),
@@ -33,10 +40,11 @@ const absolutePathPatterns = [
 
 for (const file of files) {
   const content = read(file)
+  const scannable = publicIdentity.reduce((text, allowed) => text.split(allowed).join(''), content)
   const pathLabel = label(file)
   for (const term of forbiddenTerms) {
     if (pathLabel.toLowerCase().includes(term.toLowerCase())) failures.push(`${pathLabel}: forbidden repository-specific term in path`)
-    if (content.toLowerCase().includes(term.toLowerCase())) failures.push(`${pathLabel}: forbidden repository-specific term`)
+    if (scannable.toLowerCase().includes(term.toLowerCase())) failures.push(`${pathLabel}: forbidden repository-specific term`)
   }
   for (const pattern of absolutePathPatterns) {
     if (pattern.test(content)) failures.push(`${pathLabel}: absolute local path detected`)

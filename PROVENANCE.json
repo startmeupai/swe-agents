@@ -16,6 +16,7 @@
   "publication": {
     "status": "public",
     "license": "Apache-2.0",
+    "decidedOn": "2026-09-22",
     "reviewChecklist": "REVIEW_CHECKLIST.md"
   }
 }

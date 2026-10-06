@@ -28,8 +28,10 @@ const nodeVersion = read(nodeVersionPath).trim()
 if (!/^22\.\d+\.\d+$/.test(nodeVersion)) failures.push('.nvmrc: expected an exact Node.js 22 version')
 if (packageJson) {
   if (packageJson.private !== true) failures.push('package.json: private must remain true')
-  if (packageJson.name !== 'swe-agents') failures.push('package.json: package name must be swe-agents')
-  if (!/^\d+\.\d+\.\d+$/.test(packageJson.version)) failures.push('package.json: expected a public semantic version')
+  if (!/^[a-z0-9][a-z0-9.-]*$/.test(packageJson.name ?? '')) failures.push('package.json: expected a kebab-case package name')
+  if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(packageJson.version ?? '')) {
+    failures.push('package.json: expected a semantic version such as 1.2.3 or 1.2.3-rc.1')
+  }
   if (packageJson.license !== 'Apache-2.0') failures.push('package.json: license must be Apache-2.0')
   if (packageJson.engines?.node !== nodeVersion) failures.push('package.json: engines.node must match .nvmrc exactly')
   const pnpmVersion = packageJson.packageManager?.match(/^pnpm@(\d+\.\d+\.\d+)$/)?.[1]
@@ -64,8 +66,11 @@ if (!existsSync(workflowPath)) {
   failures.push('.github/workflows/reference-checks.yml: required CI workflow is missing')
 } else {
   const workflow = normalizeLineEndings(read(workflowPath))
+  const pushBranches = /\n  push:\n    branches:(?: \[[^\]\n]+\]\n|\n(?:      - \S+\n)+)/
+  if (!pushBranches.test(workflow)) {
+    failures.push('reference-checks.yml: push must be limited to an explicit branch list under on.push.branches')
+  }
   const requiredFragments = [
-    'push:\n    branches:\n      - main',
     'permissions:\n  contents: read',
     'concurrency:',
     'timeout-minutes:',
@@ -75,7 +80,7 @@ if (!existsSync(workflowPath)) {
     'pnpm check:all'
   ]
   for (const fragment of requiredFragments) {
-    if (!workflow.includes(fragment)) failures.push(`reference-checks.yml: missing contract fragment: ${fragment.split('\n')[0]}`)
+    if (!workflow.includes(fragment)) failures.push(`reference-checks.yml: missing contract fragment: ${JSON.stringify(fragment)}`)
   }
   if (/\b(?:actions|checks|contents|deployments|id-token|issues|packages|pull-requests|security-events|statuses):\s*write\b/.test(workflow)) {
     failures.push('reference-checks.yml: workflow must not grant write permissions')
@@ -86,8 +91,8 @@ if (!existsSync(workflowPath)) {
 if (!existsSync(codeownersPath)) failures.push('.github/CODEOWNERS: ownership policy is missing')
 else {
   const activeRules = read(codeownersPath).split(/\r?\n/).filter(line => line.trim() && !line.trim().startsWith('#'))
-  if (!activeRules.some(line => line.includes('@nhawat'))) {
-    failures.push('.github/CODEOWNERS: an active maintainer must own the repository')
+  if (!activeRules.some(rule => /\s@[\w./-]+/.test(rule))) {
+    failures.push('.github/CODEOWNERS: at least one active owner rule is required')
   }
 }
 

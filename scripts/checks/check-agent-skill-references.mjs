@@ -1,8 +1,9 @@
 import { existsSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 import { finish, label, read, root, walk } from './lib.mjs'
 
 const files = walk(join(root, '.github/agents'), path => path.endsWith('.md'))
+const routing = read(join(root, 'docs/agent-routing.md'))
 const failures = []
 let references = 0
 
@@ -15,6 +16,8 @@ for (const file of files) {
     const target = join(dirname(file), match[1])
     if (!existsSync(target)) failures.push(`${label(file)}: missing skill ${match[1]}`)
   }
+  const persona = basename(file).replace(/\.agent\.md$/, '')
+  if (!routing.includes(`| \`${persona}\` |`)) failures.push(`docs/agent-routing.md: no route for persona ${persona}`)
 }
 
 finish('Agent-to-skill reference check', failures, `Agent-to-skill references passed: ${references} links.`)

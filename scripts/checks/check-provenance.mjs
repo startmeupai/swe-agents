@@ -28,6 +28,12 @@ if (provenance) {
   if (provenance.derivation?.byteForByteCopy !== false) failures.push('PROVENANCE.json: byteForByteCopy must be false')
   if (provenance.publication?.status !== 'public') failures.push('PROVENANCE.json: publication status must be public')
   if (provenance.publication?.license !== 'Apache-2.0') failures.push('PROVENANCE.json: license must be Apache-2.0')
+  const decidedOn = provenance.publication?.decidedOn ?? ''
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(decidedOn)) {
+    failures.push('PROVENANCE.json: publication.decidedOn must record when public status and license were decided (YYYY-MM-DD)')
+  } else if (decidedOn < provenance.recordedOn) {
+    failures.push('PROVENANCE.json: publication.decidedOn must not precede recordedOn')
+  }
 
   const serialized = JSON.stringify(provenance)
   const localPathPatterns = [/\/Users\//, /\/home\//, /[A-Za-z]:[\\/]Users[\\/]/]

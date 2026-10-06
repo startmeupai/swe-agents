@@ -14,7 +14,10 @@ By submitting a contribution, you agree that it is licensed under the
 - Do not use a public issue for vulnerabilities. Follow
   [`SECURITY.md`](SECURITY.md).
 - Keep examples fictional and remove credentials, private domains, customer
-  information, provider accounts, and deployable infrastructure.
+  information, provider accounts, and deployable infrastructure. Use the shared
+  placeholder vocabulary rather than inventing new names: `ExampleApp` for the
+  product, `Project Alpha` for a project, and the reserved `example.invalid`
+  domain for hosts and URLs.
 
 ## Contribution Workflow
 
@@ -68,6 +71,11 @@ with stale generated files will fail CI.
 - Keep automated, browser, provider, deployment, legal, and human gates
   separate.
 - Add or update deterministic checks when changing a validated contract.
+- Before adding a persona, show that no existing owner fits. Before adding a
+  skill, define its trigger, inputs, bounded workflow, deterministic checks,
+  safety boundaries, required evidence, and completion condition. Update the
+  catalogs, [routing guide](docs/agent-routing.md), and source map in the same
+  change.
 - Run `pnpm check:all` before requesting review.
 
 ## Pull Request Expectations
